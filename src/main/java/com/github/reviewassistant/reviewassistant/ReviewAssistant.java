@@ -1,17 +1,20 @@
 package com.github.reviewassistant.reviewassistant;
 
+import static com.google.gerrit.server.query.Predicate.and;
+import static com.google.gerrit.server.query.Predicate.not;
+
 import com.github.reviewassistant.reviewassistant.models.Calculation;
 import com.google.common.collect.Ordering;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ChangeApi;
-import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.reviewdb.client.Account;
 import com.google.gerrit.reviewdb.client.Change;
 import com.google.gerrit.reviewdb.client.Patch.ChangeType;
 import com.google.gerrit.reviewdb.client.PatchSet;
+import com.google.gerrit.reviewdb.client.PatchSetApproval;
 import com.google.gerrit.reviewdb.client.Project;
 import com.google.gerrit.server.account.AccountByEmailCache;
 import com.google.gerrit.server.account.AccountCache;
@@ -21,7 +24,13 @@ import com.google.gerrit.server.patch.PatchListCache;
 import com.google.gerrit.server.patch.PatchListEntry;
 import com.google.gerrit.server.patch.PatchListNotAvailableException;
 import com.google.gerrit.server.project.NoSuchProjectException;
+import com.google.gerrit.server.query.QueryParseException;
+import com.google.gerrit.server.query.change.ChangeData;
+import com.google.gerrit.server.query.change.ChangeQueryBuilder;
+import com.google.gerrit.server.query.change.InternalChangeQuery;
+import com.google.gwtorm.server.OrmException;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.jgit.api.BlameCommand;
@@ -61,7 +70,6 @@ public class ReviewAssistant implements Runnable {
     private static final int DEFAULT_PLUS_TWO_LIMIT = 10;
     private static final boolean DEFAULT_PLUS_TWO_REQUIRED = true;
 
-    public static boolean realUser;
     private final AccountByEmailCache emailCache;
     private final AccountCache accountCache;
     private final Change change;
@@ -70,6 +78,8 @@ public class ReviewAssistant implements Runnable {
     private final Repository repo;
     private final RevCommit commit;
     private final Project.NameKey projectName;
+    private final Provider<InternalChangeQuery> queryProvider;
+    private final ChangeQueryBuilder qb;
     private final GerritApi gApi;
     private final int maxReviewers;
     private final boolean loadBalancing;
@@ -93,7 +103,9 @@ public class ReviewAssistant implements Runnable {
         @Assisted Change change,
         @Assisted PatchSet ps,
         @Assisted Repository repo,
-        @Assisted Project.NameKey projectName) {
+        @Assisted Project.NameKey projectName,
+        Provider<InternalChangeQuery> queryProvider,
+        ChangeQueryBuilder qb) {
       this.accountCache = accountCache;
       this.patchListCache = patchListCache;
       this.commit = commit;
@@ -103,6 +115,8 @@ public class ReviewAssistant implements Runnable {
       this.ps = ps;
       this.repo = repo;
       this.projectName = projectName;
+      this.queryProvider = queryProvider;
+      this.qb = qb;
 
       Config pluginConfig = null;
       try {
@@ -188,30 +202,29 @@ public class ReviewAssistant implements Runnable {
     private List<Entry<Account, Integer>> getApprovalAccounts() {
         Map<Account, Integer> reviewersApproved = new HashMap<>();
         try {
-            List<ChangeInfo> infoList = gApi.changes().query(
-                "status:merged -age:" + plusTwoAge + "weeks limit:" + plusTwoLimit
-                    + " -label:Code-Review=2," + change.getOwner().get()
-                    + " label:Code-Review=2 project:" +
-                    projectName.toString())
-                .withOptions(ListChangesOption.LABELS, ListChangesOption.DETAILED_ACCOUNTS).get();
-            for (ChangeInfo info : infoList) {
-                //TODO Check if this is good enough
-                try {
-                    Account account =
-                        accountCache.getByUsername(info.labels.get("Code-Review").approved.username)
-                            .getAccount();
-                    if (reviewersApproved.containsKey(account)) {
-                        reviewersApproved.put(account, reviewersApproved.get(account) + 1);
-                    } else {
-                        reviewersApproved.put(account, 1);
-                    }
-                } catch (NullPointerException e) {
-                    log.error("No username for this account found in cache {}", e);
+          List<ChangeData> infoList =
+              queryProvider.get().query(and(
+                  qb.status("merged"),
+                  not(qb.age(plusTwoAge + "weeks")),
+                  not(qb.label("Code-Review=2," + change.getOwner().get())),
+                  qb.label("Code-Review=2"),
+                  qb.project(projectName.toString())));
+          for (ChangeData info : infoList) {
+            for (Map.Entry<PatchSet.Id, PatchSetApproval> p : info.approvals().entries()) {
+              PatchSetApproval pa = p.getValue();
+              String l = pa.getLabel();
+              if (l.equals("Code-Review")) {
+                Account account = accountCache.get(pa.getAccountId()).getAccount();
+                if (reviewersApproved.containsKey(account)) {
+                    reviewersApproved.put(account, reviewersApproved.get(account) + 1);
+                } else {
+                    reviewersApproved.put(account, 1);
                 }
-
+              }
             }
-        } catch (RestApiException e) {
-            log.error(e.getMessage(), e);
+          }
+        } catch (QueryParseException | OrmException e) {
+          log.error(e.getMessage(), e);
         }
 
         log.debug("getApprovalAccounts found {} reviewers", reviewersApproved.size());
@@ -342,9 +355,9 @@ public class ReviewAssistant implements Runnable {
         for (int i = 0; i < modifiableList.size(); i++) {
             Account account = modifiableList.get(i).getKey();
             try {
-                int openChanges =
-                    gApi.changes().query("status:open reviewer:" + account.getId().get()).get()
-                        .size();
+              int openChanges = queryProvider.get().query(and(
+                    qb.status("open"),
+                    qb.reviewer(account.getId().toString()))).size();
                 modifiableList.get(i).setValue(openChanges);
                 Collections.sort(modifiableList, new Comparator<Entry<Account, Integer>>() {
                     @Override
@@ -352,7 +365,7 @@ public class ReviewAssistant implements Runnable {
                         return o1.getValue() - o2.getValue();
                     }
                 });
-            } catch (RestApiException e) {
+            } catch (QueryParseException | OrmException e) {
                 log.error(e.getMessage(), e);
             }
         }
@@ -454,9 +467,6 @@ public class ReviewAssistant implements Runnable {
             }
         }
 
-        //TODO Move into addReviewers?
-        realUser = true;
         addReviewers(change, finalMap);
-        realUser = false;
     }
 }

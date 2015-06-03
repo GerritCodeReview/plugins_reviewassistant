@@ -8,7 +8,6 @@ import com.google.gerrit.reviewdb.client.Project;
 import com.google.gerrit.reviewdb.server.ReviewDb;
 import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.IdentifiedUser;
-import com.google.gerrit.server.PluginUser;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
@@ -40,7 +39,6 @@ class ChangeEventListener implements EventListener {
     private static final Logger log = LoggerFactory.getLogger(ChangeEventListener.class);
     private final ReviewAssistant.Factory reviewAssistantFactory;
     private final ThreadLocalRequestContext tl;
-    private final PluginUser pluginUser;
     private final IdentifiedUser.GenericFactory identifiedUserFactory;
     private final PluginConfigFactory cfg;
     private final String pluginName;
@@ -52,14 +50,13 @@ class ChangeEventListener implements EventListener {
     @Inject ChangeEventListener(final ReviewAssistant.Factory reviewAssistantFactory,
         final WorkQueue workQueue, final GitRepositoryManager repoManager,
         final SchemaFactory<ReviewDb> schemaFactory, final ThreadLocalRequestContext tl,
-        final PluginUser pluginUser, final IdentifiedUser.GenericFactory identifiedUserFactory,
+        final IdentifiedUser.GenericFactory identifiedUserFactory,
         final PluginConfigFactory cfg, @PluginName String pluginName) {
         this.workQueue = workQueue;
         this.reviewAssistantFactory = reviewAssistantFactory;
         this.repoManager = repoManager;
         this.schemaFactory = schemaFactory;
         this.tl = tl;
-        this.pluginUser = pluginUser;
         this.identifiedUserFactory = identifiedUserFactory;
         this.cfg = cfg;
         this.pluginName = pluginName;
@@ -116,11 +113,7 @@ class ChangeEventListener implements EventListener {
                                 RequestContext old = tl.setContext(new RequestContext() {
 
                                     @Override public CurrentUser getCurrentUser() {
-                                        if (!ReviewAssistant.realUser) {
-                                            return pluginUser;
-                                        } else {
-                                            return identifiedUserFactory.create(change.getOwner());
-                                        }
+                                        return identifiedUserFactory.create(change.getOwner());
                                     }
 
                                     @Override public Provider<ReviewDb> getReviewDbProvider() {
