@@ -11,6 +11,9 @@ gerrit_plugin(
     'Gerrit-Module: com.github.reviewassistant.reviewassistant.Module',
     'Gerrit-HttpModule: com.github.reviewassistant.reviewassistant.HttpModule',
   ],
+  provided_deps = [
+    '//lib:gson',
+  ]
 )
 
 java_library(
