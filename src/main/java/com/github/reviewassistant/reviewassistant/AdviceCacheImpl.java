@@ -2,6 +2,7 @@ package com.github.reviewassistant.reviewassistant;
 
 import com.github.reviewassistant.reviewassistant.models.Calculation;
 import com.google.gerrit.extensions.annotations.PluginData;
+import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -11,6 +12,7 @@ import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.project.NoSuchProjectException;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,22 +32,34 @@ import java.nio.file.Files;
 public class AdviceCacheImpl implements AdviceCache {
 
     private static final Logger log = LoggerFactory.getLogger(AdviceCacheImpl.class);
-    private File dir;
-    private GerritApi gApi;
-    private PluginConfigFactory cfg;
+    private final File dir;
+    private final GerritApi gApi;
+    private final PluginConfigFactory cfg;
+    private final String pluginName;
 
-    @Inject AdviceCacheImpl(@PluginData File dir, GerritApi gApi, PluginConfigFactory cfg) {
+    @Inject
+    AdviceCacheImpl(@PluginData File dir,
+        GerritApi gApi,
+        PluginConfigFactory cfg,
+        @PluginName String pluginName) {
         this.dir = dir;
         this.gApi = gApi;
         this.cfg = cfg;
+        this.pluginName = pluginName;
+    }
+
+    private File getCalculationFile(String revision) {
+        return new File(dir,
+            revision.substring(0, 2) + File.separator + revision.substring(2));
     }
 
     @Override public void storeCalculation(Calculation calculation) {
-        File file = new File(dir,
-            calculation.commitId.substring(0, 2) + File.separator + calculation.commitId
-                .substring(2));
+        File file = getCalculationFile(calculation.commitId);
         log.debug("Writing calculation to {}", file);
-        file.getParentFile().mkdirs();
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            log.error("Failed to create directory for file {}", file);
+            return;
+        }
         try (BufferedWriter writer = Files
             .newBufferedWriter(file.toPath(), Charset.forName("UTF-8"))) {
             Gson gson = new Gson();
@@ -62,9 +76,8 @@ public class AdviceCacheImpl implements AdviceCache {
     }
 
     @Override public Calculation fetchCalculation(RevisionResource resource) {
-        File file = new File(dir,
-            resource.getPatchSet().getRevision().get().substring(0, 2) + File.separator + resource
-                .getPatchSet().getRevision().get().substring(2));
+        File file =
+            getCalculationFile(resource.getPatchSet().getRevision().get());
         Calculation calculation = null;
         log.debug("Loading calculation from {}", file);
         try (BufferedReader reader = Files
@@ -73,9 +86,7 @@ public class AdviceCacheImpl implements AdviceCache {
             calculation = gson.fromJson(reader.readLine(), Calculation.class);
             log.info("Returning Calculation {}", calculation.toString());
         } catch (IOException e) {
-            log.error("Could not read calculation file for {}",
-                resource.getPatchSet().getRevision().get());
-            log.error(e.toString());
+            // Ignore
         }
 
         if (calculation == null || calculation.totalReviewTime == 0) {
@@ -86,7 +97,7 @@ public class AdviceCacheImpl implements AdviceCache {
                 ChangeInfo info = cApi.get();
                 double reviewTimeModifier =
                     cfg.getProjectPluginConfigWithInheritance(resource.getChange().getProject(),
-                        "reviewassistant").getInt("time", "reviewTimeModifier", 100);
+                        pluginName).getInt("time", "reviewTimeModifier", 100);
                 calculation = ReviewAssistant.calculate(info, reviewTimeModifier / 100);
                 storeCalculation(calculation);
             } catch (RestApiException e) {

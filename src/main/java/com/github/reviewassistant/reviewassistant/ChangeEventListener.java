@@ -1,6 +1,7 @@
 package com.github.reviewassistant.reviewassistant;
 
 import com.google.gerrit.common.EventListener;
+import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.reviewdb.client.Change;
 import com.google.gerrit.reviewdb.client.PatchSet;
 import com.google.gerrit.reviewdb.client.Project;
@@ -42,6 +43,7 @@ class ChangeEventListener implements EventListener {
     private final PluginUser pluginUser;
     private final IdentifiedUser.GenericFactory identifiedUserFactory;
     private final PluginConfigFactory cfg;
+    private final String pluginName;
     private WorkQueue workQueue;
     private GitRepositoryManager repoManager;
     private SchemaFactory<ReviewDb> schemaFactory;
@@ -51,7 +53,7 @@ class ChangeEventListener implements EventListener {
         final WorkQueue workQueue, final GitRepositoryManager repoManager,
         final SchemaFactory<ReviewDb> schemaFactory, final ThreadLocalRequestContext tl,
         final PluginUser pluginUser, final IdentifiedUser.GenericFactory identifiedUserFactory,
-        final PluginConfigFactory cfg) {
+        final PluginConfigFactory cfg, @PluginName String pluginName) {
         this.workQueue = workQueue;
         this.reviewAssistantFactory = reviewAssistantFactory;
         this.repoManager = repoManager;
@@ -60,6 +62,7 @@ class ChangeEventListener implements EventListener {
         this.pluginUser = pluginUser;
         this.identifiedUserFactory = identifiedUserFactory;
         this.cfg = cfg;
+        this.pluginName = pluginName;
     }
 
     @Override public void onEvent(Event changeEvent) {
@@ -75,7 +78,7 @@ class ChangeEventListener implements EventListener {
         try {
             log.debug("Checking if autoAddReviewers is enabled");
             autoAddReviewers =
-                cfg.getProjectPluginConfigWithInheritance(projectName, "reviewassistant")
+                cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
                     .getBoolean("reviewers", "autoAddReviewers", true);
         } catch (NoSuchProjectException e) {
             log.error("Could not find project {}", projectName);
@@ -83,90 +86,82 @@ class ChangeEventListener implements EventListener {
         log.debug(
             autoAddReviewers ? "autoAddReviewers is enabled" : "autoAddReviewers is disabled");
         if (autoAddReviewers) {
-            Repository repo;
-            try {
-                repo = repoManager.openRepository(projectName);
+            try (Repository repo = repoManager.openRepository(projectName)) {
+                final ReviewDb reviewDb;
+                try (RevWalk walk = new RevWalk(repo)) {
+                    reviewDb = schemaFactory.open();
+                    try {
+                        Change.Id changeId = new Change.Id(Integer.parseInt(event.change.number));
+                        PatchSet.Id psId =
+                            new PatchSet.Id(changeId, Integer.parseInt(event.patchSet.number));
+                        PatchSet ps = reviewDb.patchSets().get(psId);
+                        if (ps == null) {
+                            log.warn("Could not find patch set {}", psId.get());
+                            return;
+                        }
+                        // psId.getParentKey = changeID
+                        final Change change = reviewDb.changes().get(psId.getParentKey());
+                        if (change == null) {
+                            log.warn("Could not find change {}", psId.getParentKey());
+                            return;
+                        }
+
+                        RevCommit commit =
+                            walk.parseCommit(ObjectId.fromString(event.patchSet.revision));
+
+                        final Runnable task =
+                            reviewAssistantFactory.create(commit, change, ps, repo, projectName);
+                        workQueue.getDefaultQueue().submit(new Runnable() {
+                            @Override public void run() {
+                                RequestContext old = tl.setContext(new RequestContext() {
+
+                                    @Override public CurrentUser getCurrentUser() {
+                                        if (!ReviewAssistant.realUser) {
+                                            return pluginUser;
+                                        } else {
+                                            return identifiedUserFactory.create(change.getOwner());
+                                        }
+                                    }
+
+                                    @Override public Provider<ReviewDb> getReviewDbProvider() {
+                                        return new Provider<ReviewDb>() {
+                                            @Override public ReviewDb get() {
+                                                if (db == null) {
+                                                    try {
+                                                        db = schemaFactory.open();
+                                                    } catch (OrmException e) {
+                                                        throw new ProvisionException(
+                                                            "Cannot open ReviewDb", e);
+                                                    }
+                                                }
+                                                return db;
+                                            }
+                                        };
+                                    }
+                                });
+                                try {
+                                    task.run();
+                                } finally {
+                                    tl.setContext(old);
+                                    if (db != null) {
+                                        db.close();
+                                        db = null;
+                                    }
+                                }
+                            }
+                        });
+                    } catch (IOException e) {
+                        log.error("Could not get commit for revision {}: {}", event.patchSet.revision,
+                            e);
+                    } finally {
+                        reviewDb.close();
+                    }
+                } catch (OrmException e) {
+                    log.error("Could not open review database: {}", e);
+                }
             } catch (IOException e) {
                 log.error("Could not open repository for {}", projectName);
                 return;
-            }
-
-            final ReviewDb reviewDb;
-            final RevWalk walk = new RevWalk(repo);
-
-            try {
-                reviewDb = schemaFactory.open();
-                try {
-                    Change.Id changeId = new Change.Id(Integer.parseInt(event.change.number));
-                    PatchSet.Id psId =
-                        new PatchSet.Id(changeId, Integer.parseInt(event.patchSet.number));
-                    PatchSet ps = reviewDb.patchSets().get(psId);
-                    if (ps == null) {
-                        log.warn("Could not find patch set {}", psId.get());
-                        return;
-                    }
-                    // psId.getParentKey = changeID
-                    final Change change = reviewDb.changes().get(psId.getParentKey());
-                    if (change == null) {
-                        log.warn("Could not find change {}", psId.getParentKey());
-                        return;
-                    }
-
-                    RevCommit commit =
-                        walk.parseCommit(ObjectId.fromString(event.patchSet.revision));
-
-                    final Runnable task =
-                        reviewAssistantFactory.create(commit, change, ps, repo, projectName);
-                    workQueue.getDefaultQueue().submit(new Runnable() {
-                        @Override public void run() {
-                            RequestContext old = tl.setContext(new RequestContext() {
-
-                                @Override public CurrentUser getCurrentUser() {
-                                    if (!ReviewAssistant.realUser) {
-                                        return pluginUser;
-                                    } else {
-                                        return identifiedUserFactory.create(change.getOwner());
-                                    }
-                                }
-
-                                @Override public Provider<ReviewDb> getReviewDbProvider() {
-                                    return new Provider<ReviewDb>() {
-                                        @Override public ReviewDb get() {
-                                            if (db == null) {
-                                                try {
-                                                    db = schemaFactory.open();
-                                                } catch (OrmException e) {
-                                                    throw new ProvisionException(
-                                                        "Cannot open ReviewDb", e);
-                                                }
-                                            }
-                                            return db;
-                                        }
-                                    };
-                                }
-                            });
-                            try {
-                                task.run();
-                            } finally {
-                                tl.setContext(old);
-                                if (db != null) {
-                                    db.close();
-                                    db = null;
-                                }
-                            }
-                        }
-                    });
-                } catch (IOException e) {
-                    log.error("Could not get commit for revision {}: {}", event.patchSet.revision,
-                        e);
-                } finally {
-                    reviewDb.close();
-                }
-            } catch (OrmException e) {
-                log.error("Could not open review database: {}", e);
-            } finally {
-                walk.release();
-                repo.close();
             }
         }
     }
