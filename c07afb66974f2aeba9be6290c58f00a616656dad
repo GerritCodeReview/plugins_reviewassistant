@@ -22,6 +22,30 @@
       "revId": "c07afb66974f2aeba9be6290c58f00a616656dad",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4416da01_348d5027",
+        "filename": "BUCK",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2015-09-15T12:12:52Z",
+      "side": 1,
+      "message": "Opps, wrong justification. provided_deps should be used to prevent double deployment of this artifact: 1. in gerrit.war, 2. in plugin",
+      "parentUuid": "649cbed8_edf025a0",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 6
+      },
+      "revId": "c07afb66974f2aeba9be6290c58f00a616656dad",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
