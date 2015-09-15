@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "649cbed8_6d05551b",
+        "filename": "lib/gerrit/BUCK",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2015-09-15T12:16:45Z",
+      "side": 1,
+      "message": "When stable plugin API is used, shall should be always specified.",
+      "revId": "35a213bbc1462217faea192b528f6efdcc239438",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "649cbed8_4d021915",
+        "filename": "lib/gerrit/BUCK",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2015-09-15T12:16:45Z",
+      "side": 1,
+      "message": "same here.",
+      "revId": "35a213bbc1462217faea192b528f6efdcc239438",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
