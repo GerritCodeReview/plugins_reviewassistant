@@ -115,7 +115,7 @@ class ChangeEventListener implements EventListener {
                             @Override public void run() {
                                 RequestContext old = tl.setContext(new RequestContext() {
 
-                                    @Override public CurrentUser getCurrentUser() {
+                                    @Override public CurrentUser getUser() {
                                         if (!ReviewAssistant.realUser) {
                                             return pluginUser;
                                         } else {
