@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b3f57ea_9d332338",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2015-11-24T08:18:40Z",
+      "side": 1,
+      "message": "I don\u0027t think this is doing what I wanted.  In the debugger I can see it gets parsed to \"-Code-Review+2\" without the user.",
+      "range": {
+        "startLine": 209,
+        "startChar": 18,
+        "endLine": 209,
+        "endChar": 76
+      },
+      "revId": "34d1994a2bf32606d860187ae5a7943e304f7580",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
