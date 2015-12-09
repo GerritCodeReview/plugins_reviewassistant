@@ -322,7 +322,7 @@ public class ReviewAssistant implements Runnable {
                     default:
                         reason = "unknown reason";
                 }
-                log.info("{} was added to change {} ({})", entry.getKey().getPreferredEmail(),
+                log.debug("{} was added to change {} ({})", entry.getKey().getPreferredEmail(),
                     change.getChangeId(), reason);
             }
         } catch (RestApiException e) {
@@ -360,7 +360,7 @@ public class ReviewAssistant implements Runnable {
     }
 
     @Override public void run() {
-        log.info(
+        log.debug(
             "CONFIG: maxReviewers: " + maxReviewers + ", enableLoadBalancing: " + loadBalancing +
                 ", plusTwoAge: " + plusTwoAge + ", plusTwoLimit: " + plusTwoLimit
                 + ", plusTwoRequired: " + plusTwoRequired);

@@ -84,7 +84,7 @@ public class AdviceCacheImpl implements AdviceCache {
             .newBufferedReader(file.toPath(), Charset.forName("UTF-8"))) {
             Gson gson = new Gson();
             calculation = gson.fromJson(reader.readLine(), Calculation.class);
-            log.info("Returning Calculation {}", calculation.toString());
+            log.debug("Returning Calculation {}", calculation.toString());
         } catch (IOException e) {
             // Ignore
         }
