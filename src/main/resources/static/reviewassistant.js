@@ -16,10 +16,7 @@ Gerrit.install(function(self) {
         container.appendChild(advice);
         change_plugins.appendChild(container);
         var url = "changes/" + c._number + "/revisions/" + r._number + "/reviewassistant~advice";
-        console.log("Url is: " + url);
-        console.log("Asking for advice...");
         Gerrit.get(url, function (r) {
-            console.log("Got advice: " + r);
             advice.innerHTML = r;
         });
     }
