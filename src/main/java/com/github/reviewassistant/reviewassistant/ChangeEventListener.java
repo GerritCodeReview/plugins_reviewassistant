@@ -70,9 +70,9 @@ class ChangeEventListener implements EventListener {
             return;
         }
         PatchSetCreatedEvent event = (PatchSetCreatedEvent) changeEvent;
-        log.debug("Received new commit: {}", event.patchSet.revision);
+        log.debug("Received new commit: {}", event.patchSet.get().revision);
 
-        Project.NameKey projectName = new Project.NameKey(event.change.project);
+        Project.NameKey projectName = event.projectNameKey;
 
         boolean autoAddReviewers = true;
         try {
@@ -91,9 +91,9 @@ class ChangeEventListener implements EventListener {
                 try (RevWalk walk = new RevWalk(repo)) {
                     reviewDb = schemaFactory.open();
                     try {
-                        Change.Id changeId = new Change.Id(Integer.parseInt(event.change.number));
+                        Change.Id changeId = new Change.Id(Integer.parseInt(event.change.get().number));
                         PatchSet.Id psId =
-                            new PatchSet.Id(changeId, Integer.parseInt(event.patchSet.number));
+                            new PatchSet.Id(changeId, Integer.parseInt(event.patchSet.get().number));
                         PatchSet ps = reviewDb.patchSets().get(psId);
                         if (ps == null) {
                             log.warn("Could not find patch set {}", psId.get());
@@ -107,7 +107,7 @@ class ChangeEventListener implements EventListener {
                         }
 
                         RevCommit commit =
-                            walk.parseCommit(ObjectId.fromString(event.patchSet.revision));
+                            walk.parseCommit(ObjectId.fromString(event.patchSet.get().revision));
 
                         final Runnable task =
                             reviewAssistantFactory.create(commit, change, ps, repo, projectName);
@@ -151,7 +151,7 @@ class ChangeEventListener implements EventListener {
                             }
                         });
                     } catch (IOException e) {
-                        log.error("Could not get commit for revision {}: {}", event.patchSet.revision,
+                        log.error("Could not get commit for revision {}: {}", event.patchSet.get().revision,
                             e);
                     } finally {
                         reviewDb.close();
