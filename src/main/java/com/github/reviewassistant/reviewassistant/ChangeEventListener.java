@@ -122,9 +122,8 @@ class ChangeEventListener implements EventListener {
                                     @Override public CurrentUser getUser() {
                                         if (!ReviewAssistant.realUser) {
                                             return pluginUser;
-                                        } else {
-                                            return identifiedUserFactory.create(change.getOwner());
                                         }
+                                        return identifiedUserFactory.create(change.getOwner());
                                     }
 
                                     @Override public Provider<ReviewDb> getReviewDbProvider() {
