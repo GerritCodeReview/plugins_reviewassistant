@@ -46,9 +46,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-enum AddReason {PLUS_TWO, EXPERIENCE}
-
-
 /**
  * A class for calculating recommended review time and
  * recommended reviewers.
@@ -81,6 +78,8 @@ public class ReviewAssistant implements Runnable {
         ReviewAssistant create(RevCommit commit, Change change, PatchSet ps, Repository repo,
             Project.NameKey projectName);
     }
+
+    enum AddReason {PLUS_TWO, EXPERIENCE}
 
     @Inject
     public ReviewAssistant(PatchListCache patchListCache,
