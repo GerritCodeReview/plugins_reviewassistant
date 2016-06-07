@@ -10,6 +10,8 @@ import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.PluginUser;
 import com.google.gerrit.server.config.PluginConfigFactory;
+import com.google.gerrit.server.data.ChangeAttribute;
+import com.google.gerrit.server.data.PatchSetAttribute;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
 import com.google.gerrit.server.git.GitRepositoryManager;
@@ -70,9 +72,11 @@ class ChangeEventListener implements EventListener {
             return;
         }
         PatchSetCreatedEvent event = (PatchSetCreatedEvent) changeEvent;
-        log.debug("Received new commit: {}", event.patchSet.revision);
+        ChangeAttribute c = event.change.get();
+        PatchSetAttribute p = event.patchSet.get();
+        log.debug("Received new commit: {}", p.revision);
 
-        Project.NameKey projectName = new Project.NameKey(event.change.project);
+        Project.NameKey projectName = event.getProjectNameKey();
 
         boolean autoAddReviewers = true;
         try {
@@ -91,9 +95,9 @@ class ChangeEventListener implements EventListener {
                 try (RevWalk walk = new RevWalk(repo)) {
                     reviewDb = schemaFactory.open();
                     try {
-                        Change.Id changeId = new Change.Id(Integer.parseInt(event.change.number));
+                        Change.Id changeId = new Change.Id(Integer.parseInt(c.number));
                         PatchSet.Id psId =
-                            new PatchSet.Id(changeId, Integer.parseInt(event.patchSet.number));
+                            new PatchSet.Id(changeId, Integer.parseInt(p.number));
                         PatchSet ps = reviewDb.patchSets().get(psId);
                         if (ps == null) {
                             log.warn("Could not find patch set {}", psId.get());
@@ -107,7 +111,7 @@ class ChangeEventListener implements EventListener {
                         }
 
                         RevCommit commit =
-                            walk.parseCommit(ObjectId.fromString(event.patchSet.revision));
+                            walk.parseCommit(ObjectId.fromString(p.revision));
 
                         final Runnable task =
                             reviewAssistantFactory.create(commit, change, ps, repo, projectName);
@@ -151,7 +155,7 @@ class ChangeEventListener implements EventListener {
                             }
                         });
                     } catch (IOException e) {
-                        log.error("Could not get commit for revision {}: {}", event.patchSet.revision,
+                        log.error("Could not get commit for revision {}: {}", p.revision,
                             e);
                     } finally {
                         reviewDb.close();
