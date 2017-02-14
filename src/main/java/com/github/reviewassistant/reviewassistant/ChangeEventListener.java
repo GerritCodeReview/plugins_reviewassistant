@@ -95,9 +95,9 @@ class ChangeEventListener implements EventListener {
                 try (RevWalk walk = new RevWalk(repo)) {
                     reviewDb = schemaFactory.open();
                     try {
-                        Change.Id changeId = new Change.Id(Integer.parseInt(c.number));
+                        Change.Id changeId = new Change.Id(Integer.parseInt(Integer.toString(c.number)));
                         PatchSet.Id psId =
-                            new PatchSet.Id(changeId, Integer.parseInt(p.number));
+                            new PatchSet.Id(changeId, Integer.parseInt(Integer.toString(p.number)));
                         PatchSet ps = reviewDb.patchSets().get(psId);
                         if (ps == null) {
                             log.warn("Could not find patch set {}", psId.get());
