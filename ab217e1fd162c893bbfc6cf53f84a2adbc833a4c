@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1e9a79b_cf555128",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ChangeEventListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2017-02-14T21:27:17Z",
+      "side": 1,
+      "message": "This is wrong. Just remove Integer.parseInt() call, like this: [1].\n\n* [1] http://paste.openstack.org/show/598891/",
+      "range": {
+        "startLine": 98,
+        "startChar": 1,
+        "endLine": 101,
+        "endChar": 1
+      },
+      "revId": "ab217e1fd162c893bbfc6cf53f84a2adbc833a4c",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
