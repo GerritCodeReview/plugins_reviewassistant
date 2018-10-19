@@ -13,8 +13,9 @@ import com.google.gerrit.reviewdb.client.Change;
 import com.google.gerrit.reviewdb.client.Patch.ChangeType;
 import com.google.gerrit.reviewdb.client.PatchSet;
 import com.google.gerrit.reviewdb.client.Project;
-import com.google.gerrit.server.account.AccountByEmailCache;
 import com.google.gerrit.server.account.AccountCache;
+import com.google.gerrit.server.account.AccountState;
+import com.google.gerrit.server.account.Emails;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.patch.PatchList;
 import com.google.gerrit.server.patch.PatchListCache;
@@ -23,6 +24,7 @@ import com.google.gerrit.server.patch.PatchListNotAvailableException;
 import com.google.gerrit.server.project.NoSuchProjectException;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.gwtorm.server.OrmException;
 
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -44,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -59,7 +62,7 @@ public class ReviewAssistant implements Runnable {
     private static final boolean DEFAULT_PLUS_TWO_REQUIRED = true;
 
     public static boolean realUser;
-    private final AccountByEmailCache emailCache;
+    private final Emails emails;
     private final AccountCache accountCache;
     private final Change change;
     private final PatchListCache patchListCache;
@@ -85,7 +88,7 @@ public class ReviewAssistant implements Runnable {
     public ReviewAssistant(PatchListCache patchListCache,
         AccountCache accountCache,
         GerritApi gApi,
-        AccountByEmailCache emailCache,
+        Emails emails,
         PluginConfigFactory cfg,
         @PluginName String pluginName,
         @Assisted RevCommit commit,
@@ -97,7 +100,7 @@ public class ReviewAssistant implements Runnable {
       this.patchListCache = patchListCache;
       this.commit = commit;
       this.gApi = gApi;
-      this.emailCache = emailCache;
+      this.emails = emails;
       this.change = change;
       this.ps = ps;
       this.repo = repo;
@@ -196,13 +199,14 @@ public class ReviewAssistant implements Runnable {
             for (ChangeInfo info : infoList) {
                 //TODO Check if this is good enough
                 try {
-                    Account account =
-                        accountCache.getByUsername(info.labels.get("Code-Review").approved.username)
-                            .getAccount();
-                    if (reviewersApproved.containsKey(account)) {
-                        reviewersApproved.put(account, reviewersApproved.get(account) + 1);
-                    } else {
-                        reviewersApproved.put(account, 1);
+                    Optional<Account> accountState = accountCache.get(id).map(AccountState::getAccount);
+                    if (accountState.isPresent()) {
+                      Account account = accountState.get().getByUsername(info.labels.get("Code-Review").approved.username).getAccount();
+                      if (reviewersApproved.containsKey(account) {
+                          reviewersApproved.put(account, reviewersApproved.get(account + 1);
+                      } else {
+                          reviewersApproved.put(account, 1);
+                      }
                     }
                 } catch (NullPointerException e) {
                     log.error("No username for this account found in cache {}", e);
@@ -267,19 +271,24 @@ public class ReviewAssistant implements Runnable {
             for (Edit edit : edits) {
                 for (int i = edit.getBeginA(); i < edit.getEndA(); i++) {
                     RevCommit commit = blameResult.getSourceCommit(i);
-                    Set<Account.Id> idSet =
-                        emailCache.get(commit.getAuthorIdent().getEmailAddress());
-                    for (Account.Id id : idSet) {
-                        Account account = accountCache.get(id).getAccount();
-                        if (account.isActive() && !change.getOwner().equals(account.getId())) {
-                            Integer count = blameData.get(account);
-                            if (count == null) {
-                                count = 1;
-                            } else {
-                                count = count + 1;
-                            }
-                            blameData.put(account, count);
-                        }
+                    try {
+                      Set<Account.Id> idSet =
+                          emails.getAccountFor(commit.getAuthorIdent().getEmailAddress());
+                      for (Account.Id id : idSet) {
+                          Optional<AccountState> account = accountCache.get(id);
+                          if (account.get().getAccount().isActive() && !change.getOwner().equals(account.get().getAccount().getId())) {
+                              Integer count = blameData.get(account.get().getAccount());
+                              if (count == null) {
+                                  count = 1;
+                              } else {
+                                  count = count + 1;
+                              }
+                              blameData.put(account.get().getAccount(), count);
+                          }
+                      }
+                    } catch (IOException | OrmException e) {
+                      throw new RuntimeException(
+                          "Unable to get account with email: " + commit.getAuthorIdent().getEmailAddress(), e);
                     }
                 }
             }
