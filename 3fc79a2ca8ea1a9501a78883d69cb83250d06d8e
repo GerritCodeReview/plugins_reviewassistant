@@ -22,6 +22,30 @@
       "revId": "3fc79a2ca8ea1a9501a78883d69cb83250d06d8e",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdb5a391_b49e97df",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1029953
+      },
+      "writtenOn": "2018-10-19T20:09:41Z",
+      "side": 1,
+      "message": "Fails with:\n\nplugins/reviewassistant/src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java:202: error: cannot find symbol\n                    Optional\u003cAccount\u003e accountState \u003d accountCache.map(AccountState::getAccount);\n                                                                 ^\n  symbol:   method map(AccountSta[...]count)\n  location: variable accountCache of type AccountCache\nplugins/reviewassistant/src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java:204: error: cannot find symbol\n                      Account account \u003d accountState.get().getByUsername(info.labels.get(\"Code-Review\").approved.username).getAccount();\n                                                          ^\n  symbol:   method getByUsername(String)\n  location: class Account\nplugins/reviewassistant/src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java:206: error: bad operand types for binary operator \u0027+\u0027\n                          reviewersApproved.put(account, reviewersApproved.get(account + 1));\n                                                                                       ^\n  first type:  Account\n  second type: int",
+      "parentUuid": "f22d76e2_c0c61180",
+      "range": {
+        "startLine": 202,
+        "startChar": 20,
+        "endLine": 208,
+        "endChar": 21
+      },
+      "revId": "3fc79a2ca8ea1a9501a78883d69cb83250d06d8e",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
     }
   ]
 }
