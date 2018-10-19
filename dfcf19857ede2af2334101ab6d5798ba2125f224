@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "25f13a66_a13ac84d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 12
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2018-10-19T20:25:17Z",
+      "side": 1,
+      "message": "Adapt",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "dfcf19857ede2af2334101ab6d5798ba2125f224",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "39d8f19c_db64bb7a",
         "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
         "patchSetId": 12
