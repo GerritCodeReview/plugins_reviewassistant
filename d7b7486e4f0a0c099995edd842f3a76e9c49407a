@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f43b29f_1131c187",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2018-10-19T20:40:30Z",
+      "side": 1,
+      "message": "Same problem here.",
+      "range": {
+        "startLine": 280,
+        "startChar": 30,
+        "endLine": 280,
+        "endChar": 43
+      },
+      "revId": "d7b7486e4f0a0c099995edd842f3a76e9c49407a",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
