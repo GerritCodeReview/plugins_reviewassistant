@@ -22,6 +22,30 @@
       "revId": "d7b7486e4f0a0c099995edd842f3a76e9c49407a",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8f17ba5_35a3d093",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1029953
+      },
+      "writtenOn": "2018-10-19T20:50:59Z",
+      "side": 1,
+      "message": "Thanks, done.",
+      "parentUuid": "1f43b29f_1131c187",
+      "range": {
+        "startLine": 280,
+        "startChar": 30,
+        "endLine": 280,
+        "endChar": 43
+      },
+      "revId": "d7b7486e4f0a0c099995edd842f3a76e9c49407a",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
