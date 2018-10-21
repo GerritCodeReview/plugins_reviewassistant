@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59db9d82_25de36cd",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2018-10-21T11:39:25Z",
+      "side": 1,
+      "message": "The indentation of this block is mixed up with 2 and 4 columns.\n\nI would suggest running google-java-format over the whole code base and then rebase this change on top.",
+      "range": {
+        "startLine": 201,
+        "startChar": 16,
+        "endLine": 211,
+        "endChar": 21
+      },
+      "revId": "8bd4438e01a1bafe11a5af76554248f31c18d4ff",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
