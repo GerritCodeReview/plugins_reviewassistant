@@ -46,6 +46,30 @@
       "revId": "8bd4438e01a1bafe11a5af76554248f31c18d4ff",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "603a7f95_a07b6464",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1029953
+      },
+      "writtenOn": "2018-10-21T13:59:20Z",
+      "side": 1,
+      "message": "How does one do google-java-format on a plugin? I\u0027ve only did it on core with ci guidance.",
+      "parentUuid": "e671b427_7dd629dc",
+      "range": {
+        "startLine": 201,
+        "startChar": 16,
+        "endLine": 211,
+        "endChar": 21
+      },
+      "revId": "8bd4438e01a1bafe11a5af76554248f31c18d4ff",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
     }
   ]
 }
