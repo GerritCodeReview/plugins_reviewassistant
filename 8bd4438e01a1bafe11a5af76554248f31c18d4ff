@@ -70,6 +70,30 @@
       "revId": "8bd4438e01a1bafe11a5af76554248f31c18d4ff",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb78a0bf_c8fda5de",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2018-10-21T23:15:40Z",
+      "side": 1,
+      "message": "Like this:\n\n git ls-files | grep java$ | xargs google-java-format -i\n\nDone in https://gerrit-review.googlesource.com/c/plugins/reviewassistant/+/201261",
+      "parentUuid": "603a7f95_a07b6464",
+      "range": {
+        "startLine": 201,
+        "startChar": 16,
+        "endLine": 211,
+        "endChar": 21
+      },
+      "revId": "8bd4438e01a1bafe11a5af76554248f31c18d4ff",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
     }
   ]
 }
