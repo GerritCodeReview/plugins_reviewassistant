@@ -13,8 +13,8 @@ import com.google.gerrit.reviewdb.client.Change;
 import com.google.gerrit.reviewdb.client.Patch.ChangeType;
 import com.google.gerrit.reviewdb.client.PatchSet;
 import com.google.gerrit.reviewdb.client.Project;
-import com.google.gerrit.server.account.AccountByEmailCache;
 import com.google.gerrit.server.account.AccountCache;
+import com.google.gerrit.server.account.Emails;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.patch.PatchList;
 import com.google.gerrit.server.patch.PatchListCache;
@@ -54,9 +54,9 @@ public class ReviewAssistant implements Runnable {
   private static final boolean DEFAULT_PLUS_TWO_REQUIRED = true;
 
   public static boolean realUser;
-  private final AccountByEmailCache emailCache;
   private final AccountCache accountCache;
   private final Change change;
+  private final Emails emails;
   private final PatchListCache patchListCache;
   private final PatchSet ps;
   private final Repository repo;
@@ -84,7 +84,7 @@ public class ReviewAssistant implements Runnable {
       PatchListCache patchListCache,
       AccountCache accountCache,
       GerritApi gApi,
-      AccountByEmailCache emailCache,
+      Emails emails,
       PluginConfigFactory cfg,
       @PluginName String pluginName,
       @Assisted RevCommit commit,
@@ -96,7 +96,7 @@ public class ReviewAssistant implements Runnable {
     this.patchListCache = patchListCache;
     this.commit = commit;
     this.gApi = gApi;
-    this.emailCache = emailCache;
+    this.emails = emails;
     this.change = change;
     this.ps = ps;
     this.repo = repo;
@@ -276,7 +276,7 @@ public class ReviewAssistant implements Runnable {
       for (Edit edit : edits) {
         for (int i = edit.getBeginA(); i < edit.getEndA(); i++) {
           RevCommit commit = blameResult.getSourceCommit(i);
-          Set<Account.Id> idSet = emailCache.get(commit.getAuthorIdent().getEmailAddress());
+          Set<Account.Id> idSet = emails.getAccountFor(commit.getAuthorIdent().getEmailAddress());
           for (Account.Id id : idSet) {
             Account account = accountCache.get(id).getAccount();
             if (account.isActive() && !change.getOwner().equals(account.getId())) {
