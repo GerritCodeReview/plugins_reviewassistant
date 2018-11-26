@@ -14,6 +14,7 @@ import com.google.gerrit.reviewdb.client.Patch.ChangeType;
 import com.google.gerrit.reviewdb.client.PatchSet;
 import com.google.gerrit.reviewdb.client.Project;
 import com.google.gerrit.server.account.AccountCache;
+import com.google.gerrit.server.account.AccountState;
 import com.google.gerrit.server.account.Emails;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.patch.PatchList;
@@ -33,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -202,18 +204,17 @@ public class ReviewAssistant implements Runnable {
               .get();
       for (ChangeInfo info : infoList) {
         // TODO Check if this is good enough
-        try {
-          Account account =
-              accountCache
-                  .getByUsername(info.labels.get("Code-Review").approved.username)
-                  .getAccount();
+        Optional<AccountState> accountState =
+            accountCache.getByUsername(info.labels.get("Code-Review").approved.username);
+        if (accountState.isPresent()) {
+          Account account = accountState.get().getAccount();
           if (reviewersApproved.containsKey(account)) {
             reviewersApproved.put(account, reviewersApproved.get(account) + 1);
           } else {
             reviewersApproved.put(account, 1);
           }
-        } catch (NullPointerException e) {
-          log.error("No username for this account found in cache {}", e);
+        } else {
+          log.error("No username for this account found in cache");
         }
       }
     } catch (RestApiException e) {
@@ -278,15 +279,18 @@ public class ReviewAssistant implements Runnable {
           RevCommit commit = blameResult.getSourceCommit(i);
           Set<Account.Id> idSet = emails.getAccountFor(commit.getAuthorIdent().getEmailAddress());
           for (Account.Id id : idSet) {
-            Account account = accountCache.get(id).getAccount();
-            if (account.isActive() && !change.getOwner().equals(account.getId())) {
-              Integer count = blameData.get(account);
-              if (count == null) {
-                count = 1;
-              } else {
-                count = count + 1;
+            Optional<AccountState> accountState = accountCache.get(id);
+            if (accountState.isPresent()) {
+              Account account = accountState.get().getAccount();
+              if (account.isActive() && !change.getOwner().equals(account.getId())) {
+                Integer count = blameData.get(account);
+                if (count == null) {
+                  count = 1;
+                } else {
+                  count = count + 1;
+                }
+                blameData.put(account, count);
               }
-              blameData.put(account, count);
             }
           }
         }
