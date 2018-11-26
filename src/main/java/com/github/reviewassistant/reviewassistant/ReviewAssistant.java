@@ -206,13 +206,14 @@ public class ReviewAssistant implements Runnable {
           Account account =
               accountCache
                   .getByUsername(info.labels.get("Code-Review").approved.username)
+                  .get()
                   .getAccount();
           if (reviewersApproved.containsKey(account)) {
             reviewersApproved.put(account, reviewersApproved.get(account) + 1);
           } else {
             reviewersApproved.put(account, 1);
           }
-        } catch (NullPointerException e) {
+        } catch (java.util.NoSuchElementException e) {
           log.error("No username for this account found in cache {}", e);
         }
       }
@@ -278,7 +279,7 @@ public class ReviewAssistant implements Runnable {
           RevCommit commit = blameResult.getSourceCommit(i);
           Set<Account.Id> idSet = emails.getAccountFor(commit.getAuthorIdent().getEmailAddress());
           for (Account.Id id : idSet) {
-            Account account = accountCache.get(id).getAccount();
+            Account account = accountCache.get(id).get().getAccount();
             if (account.isActive() && !change.getOwner().equals(account.getId())) {
               Integer count = blameData.get(account);
               if (count == null) {
