@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8dfaa960_78bc3d71",
+        "filename": "src/main/java/com/github/reviewassistant/reviewassistant/ReviewAssistant.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2018-11-27T13:05:53Z",
+      "side": 1,
+      "message": "exception was needed to catch dereferencing of account I think; since you check if the optional is present, this is probably not needed anymore.\n(or systematically call get, and catch NoSuchElementException exception).",
+      "range": {
+        "startLine": 219,
+        "startChar": 17,
+        "endLine": 219,
+        "endChar": 37
+      },
+      "revId": "9eddc17fdbf0fe55aa1ba919b7eb943b2f737fec",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
