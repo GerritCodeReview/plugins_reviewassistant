@@ -6,10 +6,12 @@
 # Don't add temporary files
 *~
 
-# Maven output
-/target
-
 # Eclipse
 .classpath
 .project
 .settings
+/eclipse-out
+/.apt_generated/
+
+# Bazel
+/bazel-*
