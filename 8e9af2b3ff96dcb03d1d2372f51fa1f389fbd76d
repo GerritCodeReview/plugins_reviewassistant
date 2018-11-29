@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b95900a7_6d14543a",
+        "filename": "tools/bzl/BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2018-11-29T01:58:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "515c504a_7afa9bd5",
+      "revId": "8e9af2b3ff96dcb03d1d2372f51fa1f389fbd76d",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1163ab77_f66ebffc",
         "filename": "tools/eclipse/BUILD",
         "patchSetId": 1
@@ -39,6 +57,30 @@
       "revId": "8e9af2b3ff96dcb03d1d2372f51fa1f389fbd76d",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ec7d4dd_8f4ce6d6",
+        "filename": "tools/eclipse/BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2018-11-29T01:58:58Z",
+      "side": 1,
+      "message": "Will fix when 0.19.2 is available.",
+      "parentUuid": "1163ab77_f66ebffc",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 56
+      },
+      "revId": "8e9af2b3ff96dcb03d1d2372f51fa1f389fbd76d",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
