@@ -3,7 +3,7 @@ workspace(name = "reviewassistant")
 load("//:bazlets.bzl", "load_bazlets")
 
 load_bazlets(
-    commit = "b084bd74743f4303971a2a057bcea4f3352ddf4e",
+    commit = "86562a4c8c2e885aac89eafab34a90571be2ef09",
     #local_path = "/home/<user>/projects/bazlets",
 )
 
