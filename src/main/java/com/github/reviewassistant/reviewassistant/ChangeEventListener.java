@@ -17,6 +17,7 @@ import com.google.gerrit.server.events.PatchSetCreatedEvent;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.gerrit.server.git.WorkQueue;
 import com.google.gerrit.server.project.NoSuchProjectException;
+import com.google.gerrit.server.query.change.ChangeData;
 import com.google.gerrit.server.util.RequestContext;
 import com.google.gerrit.server.util.ThreadLocalRequestContext;
 import com.google.gwtorm.server.OrmException;
@@ -41,6 +42,7 @@ class ChangeEventListener implements EventListener {
   private final PluginUser pluginUser;
   private final IdentifiedUser.GenericFactory identifiedUserFactory;
   private final PluginConfigFactory cfg;
+  private final ChangeData.Factory changeDataFactory;
   private final String pluginName;
   private WorkQueue workQueue;
   private GitRepositoryManager repoManager;
@@ -57,6 +59,7 @@ class ChangeEventListener implements EventListener {
       final PluginUser pluginUser,
       final IdentifiedUser.GenericFactory identifiedUserFactory,
       final PluginConfigFactory cfg,
+      final ChangeData.Factory changeDataFactory,
       @PluginName String pluginName) {
     this.workQueue = workQueue;
     this.reviewAssistantFactory = reviewAssistantFactory;
@@ -66,6 +69,7 @@ class ChangeEventListener implements EventListener {
     this.pluginUser = pluginUser;
     this.identifiedUserFactory = identifiedUserFactory;
     this.cfg = cfg;
+    this.changeDataFactory = changeDataFactory;
     this.pluginName = pluginName;
   }
 
@@ -92,86 +96,77 @@ class ChangeEventListener implements EventListener {
     }
     log.debug(autoAddReviewers ? "autoAddReviewers is enabled" : "autoAddReviewers is disabled");
     if (autoAddReviewers) {
-      try (Repository repo = repoManager.openRepository(projectName)) {
-        final ReviewDb reviewDb;
-        try (RevWalk walk = new RevWalk(repo)) {
-          reviewDb = schemaFactory.open();
-          try {
-            Change.Id changeId = new Change.Id(c.number);
-            PatchSet.Id psId = new PatchSet.Id(changeId, p.number);
-            PatchSet ps = reviewDb.patchSets().get(psId);
-            if (ps == null) {
-              log.warn("Could not find patch set {}", psId.get());
-              return;
-            }
-            // psId.getParentKey = changeID
-            final Change change = reviewDb.changes().get(psId.getParentKey());
-            if (change == null) {
-              log.warn("Could not find change {}", psId.getParentKey());
-              return;
-            }
-
-            RevCommit commit = walk.parseCommit(ObjectId.fromString(p.revision));
-
-            final Runnable task =
-                reviewAssistantFactory.create(commit, change, ps, repo, projectName);
-            workQueue
-                .getDefaultQueue()
-                .submit(
-                    new Runnable() {
-                      @Override
-                      public void run() {
-                        RequestContext old =
-                            tl.setContext(
-                                new RequestContext() {
-
-                                  @Override
-                                  public CurrentUser getUser() {
-                                    if (!ReviewAssistant.realUser) {
-                                      return pluginUser;
-                                    }
-                                    return identifiedUserFactory.create(change.getOwner());
-                                  }
-
-                                  @Override
-                                  public Provider<ReviewDb> getReviewDbProvider() {
-                                    return new Provider<ReviewDb>() {
-                                      @Override
-                                      public ReviewDb get() {
-                                        if (db == null) {
-                                          try {
-                                            db = schemaFactory.open();
-                                          } catch (OrmException e) {
-                                            throw new ProvisionException("Cannot open ReviewDb", e);
-                                          }
-                                        }
-                                        return db;
-                                      }
-                                    };
-                                  }
-                                });
-                        try {
-                          task.run();
-                        } finally {
-                          tl.setContext(old);
-                          if (db != null) {
-                            db.close();
-                            db = null;
-                          }
-                        }
-                      }
-                    });
-          } catch (IOException e) {
-            log.error("Could not get commit for revision {}: {}", p.revision, e);
-          } finally {
-            reviewDb.close();
-          }
-        } catch (OrmException e) {
-          log.error("Could not open review database: {}", e);
+      try (Repository repo = repoManager.openRepository(projectName);
+           RevWalk walk = new RevWalk(repo);
+           ReviewDb reviewDb = schemaFactory.open()) {
+        Change.Id changeId = new Change.Id(c.number);
+        final ChangeData cd = changeDataFactory.create(reviewDb, projectName, changeId);
+        if (cd == null) {
+          log.warn("Could not find change {} in project {}", changeId.get(),
+               projectName.toString());
+          return;
         }
-      } catch (IOException e) {
-        log.error("Could not open repository for {}", projectName);
-        return;
+
+        final Change change = cd.change();
+        PatchSet.Id psId = new PatchSet.Id(changeId, p.number);
+        PatchSet ps = cd.patchSet(psId);
+        if (ps == null) {
+          log.warn("Could not find patch set {}", psId.get());
+          return;
+        }
+
+        RevCommit commit = walk.parseCommit(ObjectId.fromString(p.revision));
+
+        final Runnable task =
+            reviewAssistantFactory.create(commit, change, ps, repo, projectName);
+        workQueue
+            .getDefaultQueue()
+            .submit(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    RequestContext old =
+                        tl.setContext(
+                            new RequestContext() {
+
+                              @Override
+                              public CurrentUser getUser() {
+                                if (!ReviewAssistant.realUser) {
+                                  return pluginUser;
+                                }
+                                return identifiedUserFactory.create(change.getOwner());
+                              }
+
+                              @Override
+                              public Provider<ReviewDb> getReviewDbProvider() {
+                                return new Provider<ReviewDb>() {
+                                  @Override
+                                  public ReviewDb get() {
+                                    if (db == null) {
+                                      try {
+                                        db = schemaFactory.open();
+                                      } catch (OrmException e) {
+                                        throw new ProvisionException("Cannot open ReviewDb", e);
+                                      }
+                                    }
+                                    return db;
+                                  }
+                                };
+                              }
+                            });
+                    try {
+                      task.run();
+                    } finally {
+                      tl.setContext(old);
+                      if (db != null) {
+                        db.close();
+                        db = null;
+                      }
+                    }
+                  }
+                });
+      } catch (OrmException | IOException x) {
+        log.error(x.getMessage(), x);
       }
     }
   }
