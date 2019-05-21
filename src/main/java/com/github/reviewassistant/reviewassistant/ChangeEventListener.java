@@ -86,14 +86,27 @@ class ChangeEventListener implements EventListener {
     Project.NameKey projectName = event.getProjectNameKey();
 
     boolean autoAddReviewers = true;
+    boolean ignorePrivate = true;
+    boolean ignoreWip = true;
     try {
       log.debug("Checking if autoAddReviewers is enabled");
       autoAddReviewers =
           cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
-              .getBoolean("reviewers", "autoAddReviewers", true);
+              .getBoolean("reviewers", "autoAddReviewers", autoAddReviewers);
+      ignorePrivate =
+          cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
+              .getBoolean("reviewers", "ignorePrivate", ignorePrivate);
+      ignoreWip =
+          cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
+              .getBoolean("reviewers", "ignoreWip", ignoreWip);
     } catch (NoSuchProjectException e) {
       log.error("Could not find project {}", projectName);
     }
+
+    if ((ignorePrivate && c.isPrivate) || (ignoreWip && c.wip)) {
+      return;
+    }
+
     log.debug(autoAddReviewers ? "autoAddReviewers is enabled" : "autoAddReviewers is disabled");
     if (autoAddReviewers) {
       try (Repository repo = repoManager.openRepository(projectName);
