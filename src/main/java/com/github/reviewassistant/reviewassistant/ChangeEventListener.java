@@ -14,6 +14,8 @@ import com.google.gerrit.server.data.PatchSetAttribute;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.EventListener;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
+import com.google.gerrit.server.events.PatchSetEvent;
+import com.google.gerrit.server.events.PrivateStateChangedEvent;
 import com.google.gerrit.server.git.GitRepositoryManager;
 import com.google.gerrit.server.git.WorkQueue;
 import com.google.gerrit.server.project.NoSuchProjectException;
@@ -73,27 +75,51 @@ class ChangeEventListener implements EventListener {
     this.pluginName = pluginName;
   }
 
+  private boolean isUnmarkPrivateEvent(Event changeEvent) {
+    if (!(changeEvent instanceof PrivateStateChangedEvent)) {
+      return false;
+    }
+    PatchSetEvent event = (PrivateStateChangedEvent) changeEvent;
+    return !Boolean.TRUE.equals(event.change.get().isPrivate);
+  }
+
   @Override
   public void onEvent(Event changeEvent) {
-    if (!(changeEvent instanceof PatchSetCreatedEvent)) {
+    boolean unmarkPrivate = isUnmarkPrivateEvent(changeEvent);
+    if (!(changeEvent instanceof PatchSetCreatedEvent) && !unmarkPrivate) {
       return;
     }
-    PatchSetCreatedEvent event = (PatchSetCreatedEvent) changeEvent;
+    PatchSetEvent event = (PatchSetEvent) changeEvent;
     ChangeAttribute c = event.change.get();
     PatchSetAttribute p = event.patchSet.get();
-    log.debug("Received new commit: {}", p.revision);
+    log.debug(unmarkPrivate ? "Unmark private commit {}" : "Received new commit: {}", p.revision);
 
     Project.NameKey projectName = event.getProjectNameKey();
 
     boolean autoAddReviewers = true;
+    boolean ignorePrivate = true;
+    boolean ignoreWip = false;
     try {
       log.debug("Checking if autoAddReviewers is enabled");
       autoAddReviewers =
           cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
-              .getBoolean("reviewers", "autoAddReviewers", true);
+              .getBoolean("reviewers", "autoAddReviewers", autoAddReviewers);
+      ignorePrivate =
+          cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
+              .getBoolean("reviewers", "ignorePrivate", ignorePrivate);
+      ignoreWip =
+          cfg.getProjectPluginConfigWithInheritance(projectName, pluginName)
+              .getBoolean("reviewers", "ignoreWip", ignoreWip);
     } catch (NoSuchProjectException e) {
       log.error("Could not find project {}", projectName);
     }
+
+    if ((!ignorePrivate && unmarkPrivate)
+        || (ignorePrivate && Boolean.TRUE.equals(c.isPrivate))
+        || (ignoreWip && Boolean.TRUE.equals(c.wip))) {
+      return;
+    }
+
     log.debug(autoAddReviewers ? "autoAddReviewers is enabled" : "autoAddReviewers is disabled");
     if (autoAddReviewers) {
       try (Repository repo = repoManager.openRepository(projectName);
