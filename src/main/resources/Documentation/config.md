@@ -64,6 +64,18 @@ reviewers.autoAddReviewer
 
     By default true.
 
+reviewers.ignorePrivate
+:   If reviewers should be added to a private change, when autoAddReviewer is enabled.
+    If disabled, only review advice is given.
+
+    By default true, so no reviewer is added automatically to private changes.
+
+reviewers.ignorePrivate
+:   If reviewers should be added to a WIP change, when autoAddReviewer is enabled. If
+    disabled, only review advice is given.
+
+    By default false.
+
 time.reviewTimeModifier
 :   Modifier for total review time in percentage. Also affects sessions indirectly.
     Value of 50 will cut the review time in half.
