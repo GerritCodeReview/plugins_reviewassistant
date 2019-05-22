@@ -49,6 +49,53 @@
     },
     {
       "key": {
+        "uuid": "470fca27_5a2fd2aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2019-05-22T19:01:35Z",
+      "side": 1,
+      "message": "Commit message I think should then be detailed some more, accordingly and as accurately as possible.",
+      "parentUuid": "1aceaed5_0921a1ed",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 43
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5010aba_d90b1ad6",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2019-05-22T19:01:35Z",
+      "side": 1,
+      "message": "I didn\u0027t notice an explanation for this addition in particular. I personally don\u0027t understand it, or the exact purpose of it -in this context.",
+      "range": {
+        "startLine": 11,
+        "startChar": 3,
+        "endLine": 11,
+        "endChar": 7
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d19a9d42_7476b2a8",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 1
@@ -84,6 +131,30 @@
       "side": 1,
       "message": "indeed, this is related. Adding the extra indent minimizes the effect of the bug.",
       "parentUuid": "d19a9d42_7476b2a8",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 8
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8607eb42_2a0d2bb6",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2019-05-22T19:01:35Z",
+      "side": 1,
+      "message": "\u003e indeed, this is related. Adding the extra indent minimizes the effect of the bug.\n\nMaybe clarify in what way exactly, through an amended commit message or so.",
+      "parentUuid": "88546a07_71e82778",
       "range": {
         "startLine": 20,
         "startChar": 0,
