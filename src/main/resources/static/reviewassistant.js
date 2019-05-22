@@ -1,12 +1,7 @@
+if (window.Polymer) {
+    return;
+}
 Gerrit.install(function(self) {
-
-    function get(url, callback) {
-        if (window.Polymer)
-            self.restApi().get(url).then(callback)
-        else
-            Gerrit.get(url, callback);
-    }
-
     function print (c, r) {
         if ((c.status != 'NEW') || (c.current_revision != r.commit.commit)) {
             return;
@@ -26,7 +21,7 @@ Gerrit.install(function(self) {
         change_plugins.appendChild(container);
 
         var url = "/changes/" + c._number + "/revisions/" + r._number + "/reviewassistant~advice";
-        get(url, function (r) {
+        Gerrit.get(url, function (r) {
             advice.innerHTML = r;
         });
     }
