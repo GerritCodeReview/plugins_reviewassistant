@@ -16,6 +16,24 @@
       "revId": "aef062bd920db6b02ce138567d2d4ba46ab46877",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68d7658b_90737a88",
+        "filename": "src/main/resources/static/reviewassistant.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-05-22T10:00:23Z",
+      "side": 1,
+      "message": "Indeed, the issue is the double-loading the of javascript file.\nWhile it is easy to fix, this is problematic in the sense that it is the recommended approach to migrate plugins to Polygerrit: https://gerrit-review.googlesource.com/Documentation/pg-plugin-migration.html",
+      "parentUuid": "19d494cb_7808186f",
+      "revId": "aef062bd920db6b02ce138567d2d4ba46ab46877",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
