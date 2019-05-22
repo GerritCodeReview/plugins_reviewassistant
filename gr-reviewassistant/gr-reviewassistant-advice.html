@@ -1,0 +1,28 @@
+<link rel="import" href="./gr-reviewassistant-htmllabel.html">
+
+<dom-module id="gr-reviewassistant-advice">
+  <template>
+    <style>
+      .review-advice {
+        max-width: 20em;
+        display: block;
+        padding-left: 1.5em;
+        padding-right: 0.5em;
+      }
+    </style>
+    <template is="dom-if" if="[[_isVisible(change, revision)]]">
+      <div class="separatedSection gr-change-metadata">
+        <section class="gr-change-metadata">
+          <span class="title gr-change-metadata">ReviewAssistant</span>
+        </section>
+        <span class="review-advice">
+          <iron-icon src="/plugins/reviewassistant/static/loading.gif" hidden="[[!loading]]">
+          </iron-icon>
+          <gr-reviewassistant-htmllabel class="gr-change-metadata" hidden="[[loading]]" content="[[advice]]" >
+          </gr-reviewassistant-htmllabel>
+        </span>
+      <div>
+    </template>
+  </template>
+  <script src='gr-reviewassistant-advice.js'></script>
+</dom-module>
