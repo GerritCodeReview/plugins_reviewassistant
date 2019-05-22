@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1aceaed5_0921a1ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-05-22T09:13:25Z",
+      "side": 1,
+      "message": "I don\u0027t know, I have yet looked if there is a bug report or tried to find a fix.\n\nThe bug is that the code block is fine for the first \u0027section\u0027. The second section, after the line break, however is not displayed correctly:\n* no more line numbering\n* different font\n* indent is not respected afterwards\n\nYou can see this in action in the configuration page of replication plugin.\n\nPartial workaround is to:\n* remove any empty lines\n* add extra indent to keep code aligned",
+      "parentUuid": "53fd0279_88dc977f",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 43
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d19a9d42_7476b2a8",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-05-21T08:47:58Z",
       "side": 1,
       "message": "Why do we need the extra indentation?  Is this the workaround mentioned in the commit message?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 8
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88546a07_71e82778",
+        "filename": "src/main/resources/Documentation/config.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-05-22T09:13:25Z",
+      "side": 1,
+      "message": "indeed, this is related. Adding the extra indent minimizes the effect of the bug.",
+      "parentUuid": "d19a9d42_7476b2a8",
       "range": {
         "startLine": 20,
         "startChar": 0,
