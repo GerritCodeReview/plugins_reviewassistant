@@ -1,3 +1,6 @@
+if (window.Polymer) {
+    return;
+}
 Gerrit.install(function(self) {
     function print (c, r) {
         if ((c.status != 'NEW') || (c.current_revision != r.commit.commit)) {
@@ -16,7 +19,7 @@ Gerrit.install(function(self) {
         container.appendChild(advice);
         change_plugins.appendChild(container);
         var url = "/changes/" + c._number + "/revisions/" + r._number + "/reviewassistant~advice";
-        get(url, function (r) {
+        Gerrit.get(url, function (r) {
             advice.innerHTML = r;
         });
     }
