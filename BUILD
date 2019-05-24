@@ -11,4 +11,5 @@ gerrit_plugin(
         "Implementation-URL: https://github.com/reviewassistant/reviewassistant",
     ],
     resources = glob(["src/main/resources/**/*"]),
+    deps = ["//java/com/google/gerrit/server/cache/serialize"],
 )
