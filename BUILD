@@ -2,6 +2,17 @@ load("//tools/bzl:plugin.bzl", "gerrit_plugin")
 load("//tools/bzl:genrule2.bzl", "genrule2")
 load("//tools/bzl:js.bzl", "polygerrit_plugin")
 
+proto_library(
+    name = "reviewassistant_proto",
+    srcs = ["src/main/proto/reviewassistant.proto"],
+)
+
+java_proto_library(
+    name = "reviewassistant_java_proto",
+    visibility = ["//visibility:public"],
+    deps = [":reviewassistant_proto"],
+)
+
 gerrit_plugin(
     name = "reviewassistant",
     srcs = glob(["src/main/java/**/*.java"]),
@@ -14,6 +25,7 @@ gerrit_plugin(
     ],
     resource_jars = [":gr-reviewassistant-static"],
     resources = glob(["src/main/resources/**/*"]),
+    deps = [":reviewassistant_java_proto"],
 )
 
 genrule2(
