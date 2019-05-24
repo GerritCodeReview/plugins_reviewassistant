@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package reviewassistant.cache;
+
+option java_package = "com.github.reviewassistant.reviewassistant.cache.proto";
+
+// Serialized form of com.github.reviewassistant.reviewassistant.models.Calculation
+// Next ID: 6
+message CalculationProto {
+  string commitId = 1;
+  int32 totalReviewTime = 2;
+  int32 hours = 3;
+  int32 minutes = 4;                                                                                                                                                                               ;
+  int32 sessions = 5;
+}

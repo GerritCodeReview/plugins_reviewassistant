@@ -1,5 +1,16 @@
 load("//tools/bzl:plugin.bzl", "gerrit_plugin")
 
+proto_library(
+    name = "reviewassistant_proto",
+    srcs = ["src/main/proto/reviewassistant.proto"],
+)
+
+java_proto_library(
+    name = "reviewassistant_java_proto",
+    visibility = ["//visibility:public"],
+    deps = [":reviewassistant_proto"],
+)
+
 gerrit_plugin(
     name = "reviewassistant",
     srcs = glob(["src/main/java/**/*.java"]),
@@ -11,5 +22,8 @@ gerrit_plugin(
         "Implementation-URL: https://github.com/reviewassistant/reviewassistant",
     ],
     resources = glob(["src/main/resources/**/*"]),
-    deps = ["//java/com/google/gerrit/server/cache/serialize"],
+    deps = [
+        "//java/com/google/gerrit/server/cache/serialize",
+        ":reviewassistant_java_proto"
+    ],
 )
