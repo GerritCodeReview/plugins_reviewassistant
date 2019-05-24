@@ -1,6 +1,7 @@
 package com.github.reviewassistant.reviewassistant;
 
 import com.github.reviewassistant.reviewassistant.models.Calculation;
+import com.github.reviewassistant.reviewassistant.cache.proto.Reviewassistant.CalculationProto;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.Cache;
 import com.google.gerrit.extensions.annotations.PluginData;
@@ -11,11 +12,11 @@ import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.server.cache.CacheModule;
 import com.google.gerrit.server.cache.serialize.CacheSerializer;
+import com.google.gerrit.server.cache.serialize.ProtoCacheSerializers;
 import com.google.gerrit.server.cache.serialize.StringCacheSerializer;
 import com.google.gerrit.server.change.RevisionResource;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.project.NoSuchProjectException;
-import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
@@ -72,15 +73,25 @@ public class AdviceCacheImpl implements AdviceCache {
   static class Serializer implements CacheSerializer<Calculation> {
     @Override
     public byte[] serialize(Calculation calculation) {
-      Gson gson = new Gson();
-      String s = gson.toJson(calculation);
-      return s.getBytes();
+      return ProtoCacheSerializers.toByteArray(
+        CalculationProto.newBuilder()
+            .setCommitId(calculation.commitId)
+            .setTotalReviewTime(calculation.totalReviewTime)
+            .setHours(calculation.hours)
+            .setMinutes(calculation.minutes)
+            .setSessions(calculation.sessions)
+            .build());
     }
 
     @Override
     public Calculation deserialize(byte[] in) {
-      Gson gson = new Gson();
-      return gson.fromJson(new String(in), Calculation.class);
+      CalculationProto proto = ProtoCacheSerializers.parseUnchecked(CalculationProto.parser(), in);
+      return new Calculation(
+          proto.getCommitId(),
+          proto.getTotalReviewTime(),
+          proto.getHours(),
+          proto.getMinutes(),
+          proto.getSessions());
     }
   }
 
