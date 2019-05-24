@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cbc542d_5dcca7e9",
+        "filename": "BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2019-05-24T17:25:19Z",
+      "side": 1,
+      "message": "You cannot do that as this would pull in Gerrit core parts as transitive ependencies and blow up plugin final artifact. Instead you should expose this library in plugin API. IIRC it was already exposed on master. Just cherry pick this change to stable-2.16 branch.",
+      "revId": "83bf726c1ff8f3a210ea9cfb56a06469e833d54a",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
