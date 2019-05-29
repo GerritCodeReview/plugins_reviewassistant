@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02ce8abd_31447e47",
+        "filename": "src/main/resources/static/reviewassistant.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1024777
+      },
+      "writtenOn": "2019-05-29T18:14:45Z",
+      "side": 1,
+      "message": "This is a security issue:\nhttps://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations\n\nIs there another way for achieving the same result that does not require using innerHTML?",
+      "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c33d23d_ebba1a90",
+        "filename": "src/main/resources/static/reviewassistant.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1024777
+      },
+      "writtenOn": "2019-05-29T18:14:45Z",
+      "side": 1,
+      "message": "Please make this the first line in this file - looks like you don\u0027t want it to be executed with PolyGerrit UI at all.",
+      "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
