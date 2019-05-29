@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "f3a70de8_8759cf33",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-05-29T14:01:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "470fca27_5a2fd2aa",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 43
+      },
+      "revId": "5730bd80ff72a3002a16d5a1b424a3be3d41c914",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5010aba_d90b1ad6",
         "filename": "src/main/resources/Documentation/config.md",
         "patchSetId": 1
