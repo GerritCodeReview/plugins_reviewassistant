@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5f3f9629_3e9653f4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2019-05-29T12:44:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "985b8d38_a3f42de7",
+      "revId": "d9cb5c6494969455c2f6952aaa7182e8720f22ad",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6895cadc_7b44a8a4",
         "filename": "src/main/resources/static/reviewassistant.js",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "d9cb5c6494969455c2f6952aaa7182e8720f22ad",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3562db21_887c2ff7",
+        "filename": "src/main/resources/static/reviewassistant.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2019-05-29T12:44:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6895cadc_7b44a8a4",
+      "revId": "d9cb5c6494969455c2f6952aaa7182e8720f22ad",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
