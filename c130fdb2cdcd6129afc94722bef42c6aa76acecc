@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ba891856_824f3f59",
+        "filename": "src/main/resources/static/reviewassistant.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-06-05T19:47:59Z",
+      "side": 1,
+      "message": "I did not find any simple solution. It seems there are some ways to do this in later versions of Polygerrit, or using a library like https://github.com/cure53/DOMPurify to sanitize the received html.\n\nAnother approach would be to change the REST api to return data instead of HTML, and do the formatting in UI code. This would be cleaner IMO, but would duplicate code between the GWT and Polygerrit UIs and I would prefer to do this in a separate change; but I can try to create such a change as well, to fix the security issue.",
+      "parentUuid": "02ce8abd_31447e47",
+      "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8c33d23d_ebba1a90",
         "filename": "src/main/resources/static/reviewassistant.js",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13361eb5_29ec0dd3",
+        "filename": "src/main/resources/static/reviewassistant.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-06-05T19:47:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c33d23d_ebba1a90",
+      "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
