@@ -457,7 +457,7 @@ public class ReviewAssistant implements Runnable {
           plusTwoAdded = true;
         }
       }
-      if (!plusTwoAdded && plusTwoRequired) {
+      if (!plusTwoAdded && plusTwoRequired && !mergeCandidates.isEmpty()) {
         finalMap.put(mergeCandidates.get(0).getKey(), AddReason.PLUS_TWO);
         log.debug(
             "Changed reason for {} to {}",
