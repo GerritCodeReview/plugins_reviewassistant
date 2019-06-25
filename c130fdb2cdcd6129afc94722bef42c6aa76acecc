@@ -69,6 +69,24 @@
       "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a031150_80ee7233",
+        "filename": "src/main/resources/static/reviewassistant.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2019-06-25T15:16:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13361eb5_29ec0dd3",
+      "revId": "c130fdb2cdcd6129afc94722bef42c6aa76acecc",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
