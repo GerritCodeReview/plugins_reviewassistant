@@ -1,3 +1,4 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@rules_java//java:defs.bzl", "java_proto_library")
 load("//tools/bzl:plugin.bzl", "gerrit_plugin")
 load("//tools/bzl:genrule2.bzl", "genrule2")
