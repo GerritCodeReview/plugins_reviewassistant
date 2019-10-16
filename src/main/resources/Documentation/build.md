@@ -28,7 +28,7 @@ in the root of Gerrit's source tree to build
 The output is created in
 
 ```
-  bazel-genfiles/plugins/reviewassistant/reviewassistant.jar
+  bazel-bin/plugins/reviewassistant/reviewassistant.jar
 ```
 
 This project can be imported into the Eclipse IDE.
