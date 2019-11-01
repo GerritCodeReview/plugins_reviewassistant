@@ -4,7 +4,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//:bazlets.bzl", "load_bazlets")
 
 load_bazlets(
-    commit = "ec989bb514e39447764057c60d3f9959bff8e153",
+    commit = "e1360b49f90930e280f6a43380ab533705c85446",
     #local_path = "/home/<user>/projects/bazlets",
 )
 
@@ -55,10 +55,10 @@ gerrit_api()
 # Protobuf rules support
 http_archive(
     name = "rules_proto",
-    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
-    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
+    sha256 = "e1360b49f90930e280f6a43380ab533705c85446366f74ed5f22fd45750cd208",
+    strip_prefix = "rules_proto-e1360b49f90930e280f6a43380ab533705c85446",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
-        "https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/e1360b49f90930e280f6a43380ab533705c85446.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/e1360b49f90930e280f6a43380ab533705c85446.tar.gz",
     ],
 )
