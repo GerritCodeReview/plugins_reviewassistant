@@ -1,6 +1,5 @@
 workspace(name = "reviewassistant")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//:bazlets.bzl", "load_bazlets")
 
 load_bazlets(
@@ -51,14 +50,3 @@ load(
 
 # Load release Plugin API
 gerrit_api()
-
-# Protobuf rules support
-http_archive(
-    name = "rules_proto",
-    sha256 = "e1360b49f90930e280f6a43380ab533705c85446366f74ed5f22fd45750cd208",
-    strip_prefix = "rules_proto-e1360b49f90930e280f6a43380ab533705c85446",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/e1360b49f90930e280f6a43380ab533705c85446.tar.gz",
-        "https://github.com/bazelbuild/rules_proto/archive/e1360b49f90930e280f6a43380ab533705c85446.tar.gz",
-    ],
-)
