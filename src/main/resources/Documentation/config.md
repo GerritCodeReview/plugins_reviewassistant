@@ -8,20 +8,16 @@ be done in the `@PLUGIN@.config` file of the `All-Projects` root project.
 Other projects can then override the configuration in their own
 `@PLUGIN@.config` file.
 
-```
+``` ini
   [reviewers]
-
     autoAddReviewers = true
     maxReviewers = 3
     enableLoadBalancing = false
     plusTwoRequired = true
     plusTwoAge = 8
     plusTwoLimit = 10
-
-
   [time]
-    reviewTimeModifier = 100
-
+        reviewTimeModifier = 100
 ```
 
 reviewers.maxReviewers
@@ -37,8 +33,10 @@ reviewers.enableLoadBalancing
 
     The query used for finding suitable +2 accounts is
 
+    ```
     status:merged -age:<plusTwoAge>weeks limit:<plusTwoLimit> -label:Code-Review=2,<Change Owner>
     label:Code-Review=2 project:<Project Name>
+    ```
 
     This query has a potential to slow down performance, but care has been taken to choose sensible defaults.
     The query returns a list of changes, whenever one of the conditions age or limit is fulfilled. The
@@ -63,6 +61,18 @@ reviewers.autoAddReviewer
 :   If reviewers should be added to a change. If disabled, only review advice is given.
 
     By default true.
+
+reviewers.ignorePrivate
+:   If reviewers should be added to a private change, when autoAddReviewer is enabled.
+    If disabled, only review advice is given.
+
+    By default true, so no reviewer is added automatically to private changes.
+
+reviewers.ignorePrivate
+:   If reviewers should be added to a WIP change, when autoAddReviewer is enabled. If
+    disabled, only review advice is given.
+
+    By default false.
 
 time.reviewTimeModifier
 :   Modifier for total review time in percentage. Also affects sessions indirectly.

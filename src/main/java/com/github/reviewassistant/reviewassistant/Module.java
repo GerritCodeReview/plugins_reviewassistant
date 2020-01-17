@@ -14,6 +14,7 @@ public class Module extends FactoryModule {
   protected void configure() {
     DynamicSet.bind(binder(), EventListener.class).to(ChangeEventListener.class);
     bind(AdviceCache.class).to(AdviceCacheImpl.class);
+    install(AdviceCacheImpl.module());
     factory(ReviewAssistant.Factory.class);
 
     install(

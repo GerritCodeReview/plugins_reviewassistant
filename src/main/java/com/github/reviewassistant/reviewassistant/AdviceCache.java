@@ -7,14 +7,9 @@ import com.google.gerrit.server.change.RevisionResource;
 public interface AdviceCache {
 
   /**
-   * Caches the provided calculation.
-   *
-   * @param calculation the calculation object to be cached
-   */
-  void storeCalculation(Calculation calculation);
-
-  /**
    * Returns the calculation object for the matching RevisionResource.
+   *
+   * <p>Calculation is retrieved from cache, or computed if not present.
    *
    * @param resource the RevisionResource to fetch calculation for from the cache
    * @return a Calculation object if one is found, null otherwise
