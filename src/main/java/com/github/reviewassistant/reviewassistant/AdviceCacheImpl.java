@@ -76,7 +76,7 @@ public class AdviceCacheImpl implements AdviceCache {
 
   @Override
   public Calculation fetchCalculation(RevisionResource resource) {
-    File file = getCalculationFile(resource.getPatchSet().getRevision().get());
+    File file = getCalculationFile(resource.getPatchSet().commitId().name());
     Calculation calculation = null;
     log.debug("Loading calculation from {}", file);
     try (BufferedReader reader = Files.newBufferedReader(file.toPath(), Charset.forName("UTF-8"))) {
@@ -90,7 +90,7 @@ public class AdviceCacheImpl implements AdviceCache {
     if (calculation == null || calculation.totalReviewTime == 0) {
       log.debug(
           "Corrupt or missing calculation. Will recalculate for {}",
-          resource.getPatchSet().getRevision().get());
+          resource.getPatchSet().commitId().name());
       try {
         ChangeApi cApi = gApi.changes().id(resource.getChange().getChangeId());
         ChangeInfo info = cApi.get();
