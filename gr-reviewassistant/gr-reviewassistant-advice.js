@@ -1,25 +1,33 @@
 (function() {
   'use strict';
 
-  Polymer({
-    is: 'gr-reviewassistant-advice',
+  class GrReviewAssistantAdvice extends Polymer.Element {
+    static get is() { return 'gr-reviewassistant-advice'; }
 
-    properties: {
-      loading: Boolean,
-      advice: String,
-    },
+    static get properties() {
+      return {
+        loading: Boolean,
+        advice: String,
+      };
+    }
 
-    attached() {
+    connectedCallback() {
+      super.connectedCallback();
       this.loading = true;
-      var url = "/changes/" + this.change._number + "/revisions/" + this.revision._number + "/reviewassistant~advice";
-      this.plugin.restApi().get(url).then( (resp) => {
+      const actionId = this.plugin.getPluginName() + '~advice';
+      const url = '/changes/' + this.change._number + '/revisions/' +
+                  this.revision._number + '/' + actionId;
+      this.plugin.restApi().get(url).then( resp => {
         this.advice = resp;
         this.loading = false;
       });
-    },
+    }
 
     _isVisible(change, revision) {
-      return !((change.status != 'NEW') || (change.current_revision != revision.commit.commit));
-    },
-  });
+      return !((change.status != 'NEW') ||
+             (change.current_revision != revision.commit.commit));
+    }
+  }
+
+  customElements.define(GrReviewAssistantAdvice.is, GrReviewAssistantAdvice);
 })();

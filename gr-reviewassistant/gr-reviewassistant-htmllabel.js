@@ -1,22 +1,28 @@
 (function() {
   'use strict';
 
-  Polymer({
-    is: 'gr-reviewassistant-htmllabel',
+  class GrReviewAssistantHtmlLabel extends Polymer.Element {
+    static get is() { return 'gr-reviewassistant-htmllabel'; }
 
-    properties: {
-      content: {
-        type: String,
-        observer: '_contentChanged'
-      }
-    },
+    static get properties() {
+      return {
+        content: {
+          type: String,
+          observer: '_contentChanged',
+        },
+      };
+    }
 
     ready() {
+      super.ready();
       this.innerHTML = this.content;
-    },
+    }
 
     _contentChanged() {
       this.innerHTML = this.content;
-    },
-  });
+    }
+  }
+
+  customElements.define(GrReviewAssistantHtmlLabel.is,
+      GrReviewAssistantHtmlLabel);
 })();
