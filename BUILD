@@ -27,7 +27,10 @@ gerrit_plugin(
     ],
     resource_jars = [":gr-reviewassistant-static"],
     resources = glob(["src/main/resources/**/*"]),
-    deps = [":reviewassistant_java_proto"],
+    deps = [
+        "//java/com/google/gerrit/proto",
+        ":reviewassistant_java_proto",
+    ],
 )
 
 genrule2(
