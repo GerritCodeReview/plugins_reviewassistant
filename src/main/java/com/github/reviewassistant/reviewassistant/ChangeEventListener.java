@@ -4,7 +4,6 @@ import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.reviewdb.client.Change;
 import com.google.gerrit.reviewdb.client.PatchSet;
 import com.google.gerrit.reviewdb.client.Project;
-import com.google.gerrit.reviewdb.server.ReviewDb;
 import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.PluginUser;
@@ -21,10 +20,7 @@ import com.google.gerrit.server.query.change.ChangeData;
 import com.google.gerrit.server.util.RequestContext;
 import com.google.gerrit.server.util.ThreadLocalRequestContext;
 import com.google.gwtorm.server.OrmException;
-import com.google.gwtorm.server.SchemaFactory;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.ProvisionException;
 import java.io.IOException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
@@ -46,15 +42,12 @@ class ChangeEventListener implements EventListener {
   private final String pluginName;
   private WorkQueue workQueue;
   private GitRepositoryManager repoManager;
-  private SchemaFactory<ReviewDb> schemaFactory;
-  private ReviewDb db;
 
   @Inject
   ChangeEventListener(
       final ReviewAssistant.Factory reviewAssistantFactory,
       final WorkQueue workQueue,
       final GitRepositoryManager repoManager,
-      final SchemaFactory<ReviewDb> schemaFactory,
       final ThreadLocalRequestContext tl,
       final PluginUser pluginUser,
       final IdentifiedUser.GenericFactory identifiedUserFactory,
@@ -64,7 +57,6 @@ class ChangeEventListener implements EventListener {
     this.workQueue = workQueue;
     this.reviewAssistantFactory = reviewAssistantFactory;
     this.repoManager = repoManager;
-    this.schemaFactory = schemaFactory;
     this.tl = tl;
     this.pluginUser = pluginUser;
     this.identifiedUserFactory = identifiedUserFactory;
@@ -97,10 +89,9 @@ class ChangeEventListener implements EventListener {
     log.debug(autoAddReviewers ? "autoAddReviewers is enabled" : "autoAddReviewers is disabled");
     if (autoAddReviewers) {
       try (Repository repo = repoManager.openRepository(projectName);
-           RevWalk walk = new RevWalk(repo);
-           ReviewDb reviewDb = schemaFactory.open()) {
+           RevWalk walk = new RevWalk(repo)) {
         Change.Id changeId = new Change.Id(c.number);
-        final ChangeData cd = changeDataFactory.create(reviewDb, projectName, changeId);
+        final ChangeData cd = changeDataFactory.create(projectName, changeId);
         if (cd == null) {
           log.warn("Could not find change {} in project {}", changeId.get(),
                projectName.toString());
@@ -128,7 +119,6 @@ class ChangeEventListener implements EventListener {
                     RequestContext old =
                         tl.setContext(
                             new RequestContext() {
-
                               @Override
                               public CurrentUser getUser() {
                                 if (!ReviewAssistant.realUser) {
@@ -136,32 +126,11 @@ class ChangeEventListener implements EventListener {
                                 }
                                 return identifiedUserFactory.create(change.getOwner());
                               }
-
-                              @Override
-                              public Provider<ReviewDb> getReviewDbProvider() {
-                                return new Provider<ReviewDb>() {
-                                  @Override
-                                  public ReviewDb get() {
-                                    if (db == null) {
-                                      try {
-                                        db = schemaFactory.open();
-                                      } catch (OrmException e) {
-                                        throw new ProvisionException("Cannot open ReviewDb", e);
-                                      }
-                                    }
-                                    return db;
-                                  }
-                                };
-                              }
                             });
                     try {
                       task.run();
                     } finally {
                       tl.setContext(old);
-                      if (db != null) {
-                        db.close();
-                        db = null;
-                      }
                     }
                   }
                 });
