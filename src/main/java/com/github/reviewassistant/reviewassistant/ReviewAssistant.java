@@ -8,11 +8,11 @@ import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
-import com.google.gerrit.reviewdb.client.Account;
-import com.google.gerrit.reviewdb.client.Change;
-import com.google.gerrit.reviewdb.client.Patch.ChangeType;
-import com.google.gerrit.reviewdb.client.PatchSet;
-import com.google.gerrit.reviewdb.client.Project;
+import com.google.gerrit.entities.Account;
+import com.google.gerrit.entities.Change;
+import com.google.gerrit.entities.Patch.ChangeType;
+import com.google.gerrit.entities.PatchSet;
+import com.google.gerrit.entities.Project;
 import com.google.gerrit.server.account.AccountCache;
 import com.google.gerrit.server.account.AccountState;
 import com.google.gerrit.server.account.Emails;
@@ -207,7 +207,7 @@ public class ReviewAssistant implements Runnable {
         Optional<AccountState> accountState =
             accountCache.getByUsername(info.labels.get("Code-Review").approved.username);
         if (accountState.isPresent()) {
-          Account account = accountState.get().getAccount();
+          Account account = accountState.get().account();
           if (reviewersApproved.containsKey(account)) {
             reviewersApproved.put(account, reviewersApproved.get(account) + 1);
           } else {
@@ -281,8 +281,8 @@ public class ReviewAssistant implements Runnable {
           for (Account.Id id : idSet) {
             Optional<AccountState> accountState = accountCache.get(id);
             if (accountState.isPresent()) {
-              Account account = accountState.get().getAccount();
-              if (account.isActive() && !change.getOwner().equals(account.getId())) {
+              Account account = accountState.get().account();
+              if (account.isActive() && !change.getOwner().equals(account.id())) {
                 Integer count = blameData.get(account);
                 if (count == null) {
                   count = 1;
@@ -324,7 +324,7 @@ public class ReviewAssistant implements Runnable {
     try {
       ChangeApi cApi = gApi.changes().id(change.getId().get());
       for (Entry<Account, AddReason> entry : map.entrySet()) {
-        cApi.addReviewer(entry.getKey().getId().toString());
+        cApi.addReviewer(entry.getKey().id().toString());
         String reason;
         switch (entry.getValue()) {
           case PLUS_TWO:
@@ -338,7 +338,7 @@ public class ReviewAssistant implements Runnable {
         }
         log.debug(
             "{} was added to change {} ({})",
-            entry.getKey().getPreferredEmail(),
+            entry.getKey().preferredEmail(),
             change.getChangeId(),
             reason);
       }
@@ -360,7 +360,7 @@ public class ReviewAssistant implements Runnable {
       Account account = modifiableList.get(i).getKey();
       try {
         int openChanges =
-            gApi.changes().query("status:open reviewer:" + account.getId().get()).get().size();
+            gApi.changes().query("status:open reviewer:" + account.id().get()).get().size();
         modifiableList.get(i).setValue(openChanges);
         Collections.sort(
             modifiableList,
@@ -434,11 +434,11 @@ public class ReviewAssistant implements Runnable {
     }
 
     for (Entry<Account, Integer> e : mergeCandidates) {
-      log.debug("Merge candidate: {}, score: {}", e.getKey().getPreferredEmail(), e.getValue());
+      log.debug("Merge candidate: {}, score: {}", e.getKey().preferredEmail(), e.getValue());
     }
 
     for (Entry<Account, Integer> e : blameCandidates) {
-      log.debug("Blame candidate: {}, score: {}", e.getKey().getPreferredEmail(), e.getValue());
+      log.debug("Blame candidate: {}, score: {}", e.getKey().preferredEmail(), e.getValue());
     }
 
     Map<Account, AddReason> finalMap = new HashMap<>();
@@ -446,14 +446,14 @@ public class ReviewAssistant implements Runnable {
       Iterator<Entry<Account, Integer>> mergeItr = mergeCandidates.iterator();
       for (Entry<Account, Integer> e : blameCandidates) {
         finalMap.put(e.getKey(), AddReason.EXPERIENCE);
-        log.debug("Added {} ({})", e.getKey().getPreferredEmail(), AddReason.EXPERIENCE);
+        log.debug("Added {} ({})", e.getKey().preferredEmail(), AddReason.EXPERIENCE);
       }
       boolean plusTwoAdded = false;
       while (finalMap.size() < maxReviewers && mergeItr.hasNext()) {
         Account account = mergeItr.next().getKey();
         if (!finalMap.containsKey(account)) {
           finalMap.put(account, AddReason.PLUS_TWO);
-          log.debug("Added {} ({})", account.getPreferredEmail(), AddReason.PLUS_TWO);
+          log.debug("Added {} ({})", account.preferredEmail(), AddReason.PLUS_TWO);
           plusTwoAdded = true;
         }
       }
@@ -461,7 +461,7 @@ public class ReviewAssistant implements Runnable {
         finalMap.put(mergeCandidates.get(0).getKey(), AddReason.PLUS_TWO);
         log.debug(
             "Changed reason for {} to {}",
-            mergeCandidates.get(0).getKey().getPreferredEmail(),
+            mergeCandidates.get(0).getKey().preferredEmail(),
             AddReason.PLUS_TWO);
       }
     } else {
@@ -470,14 +470,14 @@ public class ReviewAssistant implements Runnable {
         finalMap.put(mergeCandidates.get(0).getKey(), AddReason.PLUS_TWO);
         log.debug(
             "Added {} ({})",
-            mergeCandidates.get(0).getKey().getPreferredEmail(),
+            mergeCandidates.get(0).getKey().preferredEmail(),
             AddReason.PLUS_TWO);
       }
       while (finalMap.size() < maxReviewers && blameItr.hasNext()) {
         Account account = blameItr.next().getKey();
         if (!finalMap.containsKey(account)) {
           finalMap.put(account, AddReason.EXPERIENCE);
-          log.debug("Added {} ({})", account.getPreferredEmail(), AddReason.EXPERIENCE);
+          log.debug("Added {} ({})", account.preferredEmail(), AddReason.EXPERIENCE);
         }
       }
     }
