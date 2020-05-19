@@ -86,7 +86,7 @@ public class AdviceCacheImpl implements AdviceCache {
 
   @Override
   public Calculation fetchCalculation(RevisionResource resource) {
-    String revision = resource.getPatchSet().getRevision().get();
+    String revision = resource.getPatchSet().commitId().name();
     try {
       Calculation calc =
           cache.get(

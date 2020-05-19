@@ -1,9 +1,9 @@
 package com.github.reviewassistant.reviewassistant;
 
 import com.google.gerrit.extensions.annotations.PluginName;
-import com.google.gerrit.reviewdb.client.Change;
-import com.google.gerrit.reviewdb.client.PatchSet;
-import com.google.gerrit.reviewdb.client.Project;
+import com.google.gerrit.entities.Change;
+import com.google.gerrit.entities.PatchSet;
+import com.google.gerrit.entities.Project;
 import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.PluginUser;
@@ -21,7 +21,6 @@ import com.google.gerrit.server.project.NoSuchProjectException;
 import com.google.gerrit.server.query.change.ChangeData;
 import com.google.gerrit.server.util.RequestContext;
 import com.google.gerrit.server.util.ThreadLocalRequestContext;
-import com.google.gwtorm.server.OrmException;
 import com.google.inject.Inject;
 import java.io.IOException;
 import org.eclipse.jgit.lib.ObjectId;
@@ -116,7 +115,7 @@ class ChangeEventListener implements EventListener {
     if (autoAddReviewers) {
       try (Repository repo = repoManager.openRepository(projectName);
            RevWalk walk = new RevWalk(repo)) {
-        Change.Id changeId = new Change.Id(c.number);
+        Change.Id changeId = Change.id(c.number);
         final ChangeData cd = changeDataFactory.create(projectName, changeId);
         if (cd == null) {
           log.warn(
@@ -125,7 +124,7 @@ class ChangeEventListener implements EventListener {
         }
 
         final Change change = cd.change();
-        PatchSet.Id psId = new PatchSet.Id(changeId, p.number);
+        PatchSet.Id psId = PatchSet.id(changeId, p.number);
         PatchSet ps = cd.patchSet(psId);
         if (ps == null) {
           log.warn("Could not find patch set {}", psId.get());
@@ -159,7 +158,7 @@ class ChangeEventListener implements EventListener {
                     }
                   }
                 });
-      } catch (OrmException | IOException x) {
+      } catch (IOException x) {
         log.error(x.getMessage(), x);
       }
     }
