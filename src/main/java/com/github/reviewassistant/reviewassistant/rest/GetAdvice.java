@@ -2,6 +2,7 @@ package com.github.reviewassistant.reviewassistant.rest;
 
 import com.github.reviewassistant.reviewassistant.AdviceCache;
 import com.github.reviewassistant.reviewassistant.models.Calculation;
+import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestReadView;
 import com.google.gerrit.server.change.RevisionResource;
@@ -23,10 +24,10 @@ public class GetAdvice implements RestReadView<RevisionResource> {
   }
 
   @Override
-  public String apply(RevisionResource resource) throws RestApiException {
+  public Response<String> apply(RevisionResource resource) throws RestApiException {
     Calculation calculation = adviceCache.fetchCalculation(resource);
     if (calculation == null) {
-      return "Could not get advice for this change.";
+      return Response.ok("Could not get advice for this change.");
     }
     StringBuilder advice = new StringBuilder("Reviewers should spend <strong>");
     if (calculation.hours >= 1) {
@@ -51,6 +52,6 @@ public class GetAdvice implements RestReadView<RevisionResource> {
           .append(" sessions</strong>.");
     }
 
-    return advice.toString();
+    return Response.ok(advice.toString());
   }
 }
