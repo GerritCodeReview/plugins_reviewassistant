@@ -14,13 +14,13 @@ replacing the existing empty one.
 ```
   cd gerrit/plugins
   rm external_plugin_deps.bzl
-  ln -s reviewassistant/external_plugin_deps.bzl .
+  ln -s @PLUGIN@/external_plugin_deps.bzl .
 ```
 
 Then issue
 
 ```
-  bazel build plugins/reviewassistant
+  bazel build plugins/@PLUGIN@
 ```
 
 in the root of Gerrit's source tree to build
@@ -28,7 +28,7 @@ in the root of Gerrit's source tree to build
 The output is created in
 
 ```
-  bazel-genfiles/plugins/reviewassistant/reviewassistant.jar
+  bazel-bin/plugins/@PLUGIN@/@PLUGIN@.jar
 ```
 
 This project can be imported into the Eclipse IDE.
@@ -56,3 +56,7 @@ When building with Maven, the Gerrit Plugin API must be available.
 
 How to build the Gerrit Plugin API is described in the [Gerrit
 documentation](../../../Documentation/dev-bazel.html#_extension_and_plugin_api_jar_files).
+
+[Back to @PLUGIN@ documentation index][index]
+
+[index]: index.html
