@@ -8,9 +8,9 @@ import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.google.gerrit.proto.Protos;
 import com.google.gerrit.server.cache.CacheModule;
 import com.google.gerrit.server.cache.serialize.CacheSerializer;
-import com.google.gerrit.server.cache.serialize.ProtoCacheSerializers;
 import com.google.gerrit.server.cache.serialize.StringCacheSerializer;
 import com.google.gerrit.server.change.RevisionResource;
 import com.google.gerrit.server.config.PluginConfigFactory;
@@ -62,7 +62,7 @@ public class AdviceCacheImpl implements AdviceCache {
   static class Serializer implements CacheSerializer<Calculation> {
     @Override
     public byte[] serialize(Calculation calculation) {
-      return ProtoCacheSerializers.toByteArray(
+      return Protos.toByteArray(
           CalculationProto.newBuilder()
               .setCommitId(calculation.commitId)
               .setTotalReviewTime(calculation.totalReviewTime)
@@ -74,7 +74,7 @@ public class AdviceCacheImpl implements AdviceCache {
 
     @Override
     public Calculation deserialize(byte[] in) {
-      CalculationProto proto = ProtoCacheSerializers.parseUnchecked(CalculationProto.parser(), in);
+      CalculationProto proto = Protos.parseUnchecked(CalculationProto.parser(), in);
       return new Calculation(
           proto.getCommitId(),
           proto.getTotalReviewTime(),
