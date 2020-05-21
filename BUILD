@@ -1,5 +1,6 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@rules_java//java:defs.bzl", "java_proto_library")
+load("@npm_bazel_rollup//:index.bzl", "rollup_bundle")
 load("//tools/bzl:plugin.bzl", "gerrit_plugin")
 load("//tools/bzl:genrule2.bzl", "genrule2")
 load("//tools/bzl:js.bzl", "polygerrit_plugin")
@@ -39,7 +40,7 @@ genrule2(
     outs = ["gr-reviewassistant-static.jar"],
     cmd = " && ".join([
         "mkdir $$TMP/static",
-        "cp -r $(locations :gr-reviewassistant) $$TMP/static",
+        "cp $(locations :gr-reviewassistant) $$TMP/static",
         "cd $$TMP",
         "zip -Drq $$ROOT/$@ -g .",
     ]),
@@ -47,9 +48,18 @@ genrule2(
 
 polygerrit_plugin(
     name = "gr-reviewassistant",
-    srcs = glob([
-        "gr-reviewassistant/*.html",
-        "gr-reviewassistant/*.js",
-    ]),
-    app = "plugin.html",
+    app = "reviewassistant-bundle.js",
+    plugin_name = "reviewassistant",
+)
+
+rollup_bundle(
+    name = "reviewassistant-bundle",
+    srcs = glob(["gr-reviewassistant/*.js"]),
+    entry_point = "gr-reviewassistant/plugin.js",
+    rollup_bin = "//tools/node_tools:rollup-bin",
+    sourcemap = "hidden",
+    format = "iife",
+    deps = [
+        "@tools_npm//rollup-plugin-node-resolve",
+    ],
 )
