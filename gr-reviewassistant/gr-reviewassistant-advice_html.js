@@ -1,7 +1,4 @@
-<link rel="import" href="./gr-reviewassistant-htmllabel.html">
-
-<dom-module id="gr-reviewassistant-advice">
-  <template>
+export const htmlTemplate = Polymer.html`
     <style include="gr-change-metadata-shared-styles"></style>
     <style include="shared-styles">
       .review-advice {
@@ -24,6 +21,4 @@
         </span>
       </div>
     </template>
-  </template>
-  <script src='gr-reviewassistant-advice.js'></script>
-</dom-module>
+`;
