@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39744ff6_e8cfe97c",
+        "filename": "BUILD",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2020-05-21T15:33:19Z",
+      "side": 1,
+      "message": "You need to pass iife format to rollup_bundle, see this change that fixed checks and delete-project plugin: [1], and the Issue 12744 linked there:\n\n  format \u003d \"iife\",\n\n[1] https://gerrit-review.googlesource.com/c/plugins/delete-project/+/267428",
+      "revId": "e65bfa3e9914808b301068f5c7d2d6408e2288d1",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": true
+    }
+  ]
+}
