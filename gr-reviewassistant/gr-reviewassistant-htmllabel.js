@@ -15,11 +15,11 @@
 
     ready() {
       super.ready();
-      this.innerHTML = this.content;
+      this.$.label.innerHTML = this.content;
     }
 
     _contentChanged() {
-      this.innerHTML = this.content;
+      this.$.label.innerHTML = this.content;
     }
   }
 
