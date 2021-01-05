@@ -18,6 +18,23 @@
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1183b5fa_1de2e036",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2021-01-05T17:38:43Z",
+      "side": 1,
+      "message": "\u003e Patch Set 1:\n\u003e \n\u003e This looks good to me apart from the feedback @davido gave.\n\u003e \n\u003e Also i think the license header should be added to the files (though unrelated to any of your changes).\n\nSure, will do in a separate change.",
+      "revId": "e65bfa3e9914808b301068f5c7d2d6408e2288d1",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "39744ff6_e8cfe97c",
