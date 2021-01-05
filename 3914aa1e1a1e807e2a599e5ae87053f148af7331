@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afa5dbdf_f5bb1722",
+        "filename": ".idea/codeStyles/codeStyleConfig.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2021-01-05T19:27:30Z",
+      "side": 1,
+      "message": "These IDE formatting setting files actually unrelated and could be added in own change?",
+      "revId": "3914aa1e1a1e807e2a599e5ae87053f148af7331",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    }
+  ]
+}
