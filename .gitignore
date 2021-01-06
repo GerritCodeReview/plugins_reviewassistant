@@ -12,6 +12,3 @@
 .settings
 /eclipse-out
 /.apt_generated/
-
-# Bazel
-/bazel-*
