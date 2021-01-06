@@ -16,6 +16,24 @@
       "message": "These IDE formatting setting files actually unrelated and could be added in own change?",
       "revId": "3914aa1e1a1e807e2a599e5ae87053f148af7331",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa82cf78_217d30a5",
+        "filename": ".idea/codeStyles/codeStyleConfig.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2021-01-06T10:10:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afa5dbdf_f5bb1722",
+      "revId": "3914aa1e1a1e807e2a599e5ae87053f148af7331",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
     }
   ]
 }
