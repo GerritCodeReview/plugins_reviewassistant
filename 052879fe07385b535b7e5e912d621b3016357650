@@ -16,6 +16,24 @@
       "message": "Should we configure checker and setup Zuul CI build for this plugin?",
       "revId": "052879fe07385b535b7e5e912d621b3016357650",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d5f3d58_2d351e5d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017568
+      },
+      "writtenOn": "2021-01-07T15:42:05Z",
+      "side": 1,
+      "message": "that could be nice, can you point me to the relevant information or similar changes in other plugins?",
+      "parentUuid": "05641a74_861f50dc",
+      "revId": "052879fe07385b535b7e5e912d621b3016357650",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
     }
   ]
 }
