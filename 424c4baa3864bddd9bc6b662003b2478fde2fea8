@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "28271a3d_aaed2a35",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1012732
+      },
+      "writtenOn": "2021-03-22T18:38:26Z",
+      "side": 1,
+      "message": "\u003d\u003e new Issue 14280. Scoring VR+1 since the latter also fails with the base of this change.",
+      "revId": "424c4baa3864bddd9bc6b662003b2478fde2fea8",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    }
+  ]
+}
